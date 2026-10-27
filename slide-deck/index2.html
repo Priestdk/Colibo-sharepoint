@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retningslinjer for AI i Colibo (design 2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#2500FF; --ink:#000; --body:#575757; --muted:#8a8a85;
+  --offwhite:#FDFBF5; --grey1:#F2F1EB; --grey2:#E8E6DE; --pink:#FFDDDD; --yellow:#FFF08B;
+  --line:#dcdad2;
+  --logo:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK0AAAAoCAYAAACM0nooAAAWfmNhQlgAABZ+anVtYgAAAB5qdW1kYzJwYQARABCAAACqADibcQNjMnBhAAAAFlhqdW1iAAAAR2p1bWRjMm1hABEAEIAAAKoAOJtxA3VybjpjMnBhOjY5YjZiZDYwLTRjNmYtNGExYS05ZTM4LTE4ZGMzNGJhODZjYwAAAAOTanVtYgAAAClqdW1kYzJhcwARABCAAACqADibcQNjMnBhLmFzc2VydGlvbnMAAAAAuGp1bWIAAABEanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5pbmdyZWRpZW50LnYzAAAAABhjMnNo5QOSpl5ktggZSsMvwALGzAAAAGxjYm9yo2lkYzpmb3JtYXRpaW1hZ2UvcG5namluc3RhbmNlSUR4LHhtcDppaWQ6ODBiMjQzN2EtOWQ0ZC00NjE0LTg1MzgtOWE1OWQxNzNlOGQ4bHJlbGF0aW9uc2hpcGhwYXJlbnRPZgAAAeJqdW1iAAAAQWp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuYWN0aW9ucy52MgAAAAAYYzJzaOrJXh6RxbxgKBFC8kg7NLkAAAGZY2JvcqJnYWN0aW9uc4KiZmFjdGlvbmtjMnBhLm9wZW5lZGpwYXJhbWV0ZXJzoWtpbmdyZWRpZW50c4GiY3VybHgtc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5pbmdyZWRpZW50LnYzZGhhc2hYIFql03O1aa+/jKOeWLf6Lz2/G3e2S+OduH1MNgfz0EANpGZhY3Rpb254HWNvbS5hbnRocm9waWMuY2xhdWRlLnByb3ZpZGVkanBhcmFtZXRlcnOheB9jb20uYW50aHJvcGljLm9yaWdpbi1jb25maWRlbmNlZ3Vua25vd25rZGVzY3JpcHRpb254ZkNsYXVkZSBwcm92aWRlZCB0aGlzIGZpbGUgYXQgdGhlIHJlcXVlc3Qgb2YgYSB1c2VyIGFuZCBtYXkgaGF2ZSBjcmVhdGVkIG9yIG1vZGlmaWVkIHRoZSBmaWxlIGNvbnRlbnRzLm1zb2Z0d2FyZUFnZW50oWRuYW1lZkNsYXVkZXJhbGxBY3Rpb25zSW5jbHVkZWT1AAAAyGp1bWIAAABAanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5oYXNoLmRhdGEAAAAAGGMyc2g5a9DwJU4lQzwq41yDUAeaAAAAgGNib3KlY2FsZ2ZzaGEyNTZjcGFkTQAAAAAAAAAAAAAAAABkaGFzaFgg/FK3gbijcjGYZAqYY1c9EldR2oPVFh/L6she0poirTRkbmFtZW5qdW1iZiBtYW5pZmVzdGpleGNsdXNpb25zgaJlc3RhcnQYIWZsZW5ndGgZFooAAAI+anVtYgAAACdqdW1kYzJjbAARABCAAACqADibcQNjMnBhLmNsYWltLnYyAAAAAg9jYm9ypWNhbGdmc2hhMjU2aXNpZ25hdHVyZXhNc2VsZiNqdW1iZj0vYzJwYS91cm46YzJwYTo2OWI2YmQ2MC00YzZmLTRhMWEtOWUzOC0xOGRjMzRiYTg2Y2MvYzJwYS5zaWduYXR1cmVqaW5zdGFuY2VJRHgseG1wOmlpZDo5MDRlNTk0ZC03NWIyLTRlYjQtYWIwOS00ZjIzMDhjMDQwY2RyY3JlYXRlZF9hc3NlcnRpb25zg6JjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggWqXTc7Vpr7+Mo55Yt/ovPb8bd7ZL4524fUw2B/PQQA2iY3VybHgqc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5hY3Rpb25zLnYyZGhhc2hYID+7Q0enVJ8AbX3p9Zo4EOoAQ/Vqs6GyBOuAib8HsFTzomN1cmx4KXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaGFzaC5kYXRhZGhhc2hYIDIXxvW+CoLTkEwaMKDvfOA1aJErfb9zkLt+ezWmCqECdGNsYWltX2dlbmVyYXRvcl9pbmZvo2RuYW1lb0FudGhyb3BpYyBGaWxlc2d2ZXJzaW9uZTEuMC4wa3NwZWNWZXJzaW9uZTIuNC4wAAAQOGp1bWIAAAAoanVtZGMyY3MAEQAQgAAAqgA4m3EDYzJwYS5zaWduYXR1cmUAAAAQCGNib3LShFkCEqIBJhghWQIKMIICBjCCAY2gAwIBAgIUQOWgCu7COdC+uIP6BkIFPWdVEwAwCgYIKoZIzj0EAwMwSTEXMBUGA1UEChMOQW50aHJvcGljLCBQQkMxLjAsBgNVBAMTJUFudGhyb3BpYyBDb250ZW50IENyZWRlbnRpYWxzIFJvb3QgQ0EwHhcNMjYwODA3MTg0MzU2WhcNMjgwODA2MTk0MzU2WjBEMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEpMCcGA1UEAxMgQW50aHJvcGljIENsYXVkZSBDb250ZW50IFNpZ25pbmcwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASYegpry1AYBRTVNL1CpTlbROnY3dey+UrsF9C3phYrATN3ZHf93Mo8RQN0KOUuOn19P4oWNFWe5n2/She9N7eTo1gwVjAOBgNVHQ8BAf8EBAMCB4AwFQYDVR0lBA4wDAYKKwYBBAGD6F4CATAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFM5R4gSBTmRbI/jjxM+aPpzB11zCMAoGCCqGSM49BAMDA2cAMGQCMDFzHRSeAXrSy1WOzkbhPZ6Km2wGTmZ/2gK18k8BQGXyqz88Rdrz6CTX9flAnYNVxgIwcF9c3fVhqmJKpi+UhasNUMko69cyX6STPfta3Q8EjyzDjzoyrol46FP6VFHhvUcJoWNwYWRZDZ4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA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);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#e9e7df;overflow:hidden}
+body{position:relative;font-family:Inter,system-ui,sans-serif;color:var(--body)}
+body.nocursor,body.nocursor *{cursor:none!important}
+
+/* ---------- lærred 1600 × 900 ---------- */
+#stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform:translate(-50%,-50%);transform-origin:center;overflow:hidden;background:var(--offwhite)}
+.slide{display:none;position:absolute;inset:0;overflow:hidden;background:var(--offwhite)}
+.slide.active{display:block;animation:fadein .45s ease both}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+/* sidefod: hårlinje og logo */
+.slide::before{content:"";position:absolute;left:96px;right:96px;bottom:84px;height:1px;background:var(--line);pointer-events:none}
+.slide::after{content:"";position:absolute;left:96px;bottom:30px;width:128px;height:34px;background:var(--logo) left center/contain no-repeat;pointer-events:none}
+.frame{display:none}
+.content{position:absolute;inset:0;padding:84px 96px 120px;z-index:1}
+
+.kicker{font:700 17px/1 Inter;letter-spacing:.32em;text-transform:uppercase;color:var(--blue)}
+.kicker.alt{color:var(--blue)}
+h1,h2{font-family:Outfit,Inter,sans-serif;font-weight:700;letter-spacing:-.015em;line-height:1.06}
+h1{font-size:118px;color:var(--blue)}
+h2{font-size:80px;color:var(--ink)}
+.sub{font-size:27px;line-height:1.6;color:var(--body);max-width:1000px}
+.note{font:600 30px/1.2 Outfit;color:var(--blue)}
+.divider{height:1px;background:var(--line)}
+
+/* gul highlighter bag ét ord */
+.mark{position:relative;display:inline-block;white-space:nowrap;isolation:isolate}
+.mark svg{display:none}
+.mark::before{content:"";position:absolute;left:-.07em;right:-.07em;bottom:.02em;height:.5em;background:var(--yellow);z-index:-1;transform:scaleX(0);transform-origin:left center}
+.slide.active .mark::before{animation:hl .8s .45s cubic-bezier(.6,.1,.2,1) forwards}
+@keyframes hl{to{transform:scaleX(1)}}
+
+/* fragmenter */
+.frag{opacity:0;translate:0 16px;transition:opacity .4s ease,translate .4s ease}
+.frag.in{opacity:1;translate:0 0}
+
+/* tegninger: streg i kode */
+.draw{fill:none;stroke:var(--blue);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.draw .thin{stroke-width:1;opacity:.55}
+.draw .dash{stroke-dasharray:6 8}
+.draw rect{fill:var(--grey1)}
+.draw text{fill:var(--ink);stroke:none;font-family:Inter,sans-serif;font-size:17px}
+.draw text.cap{font-family:Outfit,sans-serif;font-weight:600;font-size:24px;fill:var(--blue)}
+.draw text.hd{font-family:Outfit,sans-serif;font-weight:700;font-size:20px;letter-spacing:.04em}
+.draw text.dm{fill:var(--muted);font-size:15px}
+
+/* titel */
+.s-title .content{display:flex;flex-direction:column;justify-content:space-between;padding-right:640px}
+.s-title .logo-big{display:none}
+.s-title h1{margin-top:44px;font-size:100px}
+.s-title .tsub{margin-top:30px;font-size:28px;color:var(--body)}
+.s-title .foot{display:flex;align-items:center;gap:24px}
+.s-title .foot .divider{flex:0 0 100px}
+.s-title .foot span{color:var(--muted);font:700 15px Inter;letter-spacing:.28em}
+.s-title .art{position:absolute;right:0;top:0;width:560px;height:900px;background:var(--blue);stroke:#fff}
+.s-title::before{right:640px}
+
+/* divider: blå flade */
+.s-divider{background:var(--blue)}
+.s-divider::before{background:rgba(253,251,245,.35)}
+.s-divider::after{filter:brightness(0) invert(1)}
+.s-divider .content{display:flex;flex-direction:column;justify-content:center;gap:28px}
+.s-divider .part{display:flex;align-items:baseline;gap:30px}
+.s-divider .num{font:700 180px/0.9 Outfit;color:var(--yellow);letter-spacing:-.03em}
+.s-divider .kicker{color:var(--offwhite)}
+.s-divider h1{font-size:104px;color:var(--offwhite)}
+.s-divider .mark{color:var(--ink)}
+.s-divider .rule{height:2px;background:var(--pink);margin-top:10px;width:100%}
+.s-divider .tag{font-size:24px;color:var(--pink)}
+
+/* stor overskrift */
+.s-big .content{display:flex;flex-direction:column;justify-content:center;gap:34px}
+.s-big h1{font-size:124px}
+.s-big .sub{max-width:1060px}
+
+/* overskrift + diagram */
+.s-diagram .content{display:flex;flex-direction:column;gap:22px}
+.s-diagram h2{margin:6px 0 4px}
+.s-diagram .sub{max-width:1100px;font-size:25px}
+.s-diagram svg.fig{width:100%;flex:1;min-height:0;margin-top:6px}
+
+/* kort */
+.s-cards .content{display:flex;flex-direction:column}
+.s-cards h2{margin:26px 0 44px}
+.cards{display:grid;grid-template-columns:repeat(var(--n,3),1fr);gap:28px}
+.card{position:relative;padding:34px 34px 36px;background:var(--grey1);border-top:4px solid var(--blue);min-height:300px}
+.card .num{font:700 44px/1 Outfit;color:var(--blue)}
+.card .rule{margin:20px 0 0;height:1px;background:var(--line)}
+.card h3{font:700 34px/1.12 Outfit;margin:22px 0 14px;color:var(--ink);letter-spacing:-.01em}
+.card p{font-size:21px;line-height:1.55;color:var(--body)}
+.card .tag{display:inline-block;margin-bottom:18px;font:700 15px Inter;letter-spacing:.28em;text-transform:uppercase;color:var(--blue)}
+
+/* bibemærkning som callout */
+.sidenote{align-self:flex-start;background:var(--pink);padding:20px 28px;font:500 26px/1.4 Inter;color:var(--ink);max-width:1100px}
+
+/* styring */
+#bar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:flex;align-items:center;gap:18px;
+  padding:8px 16px;background:rgba(0,0,0,.82);border:1px solid rgba(253,251,245,.4);color:#FDFBF5;
+  font:400 16px 'JetBrains Mono',monospace;letter-spacing:.18em;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+#bar.show{opacity:1;pointer-events:auto}
+#bar button{background:none;border:1px solid rgba(253,251,245,.4);color:#FDFBF5;width:40px;height:34px;font:700 18px 'JetBrains Mono',monospace;cursor:pointer}
+#bar button:hover{background:rgba(253,251,245,.16)}
+#overview{position:fixed;inset:0;background:rgba(10,10,20,.96);z-index:60;overflow:auto;padding:36px;display:none}
+#overview.open{display:block}
+#overview h2{font:700 16px Inter;letter-spacing:.2em;color:#FFF08B;margin-bottom:24px;text-transform:uppercase}
+.ogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+.oitem{background:none;border:1px solid rgba(253,251,245,.4);color:#FDFBF5;text-align:left;font:400 14px Inter;cursor:pointer;padding:8px}
+.oitem:hover,.oitem:focus-visible{border-color:#FFF08B;outline:none}
+.oitem.cur{border-color:#2500FF;box-shadow:0 0 0 2px #2500FF}
+.oitem .tw{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;margin-bottom:8px}
+.oitem .tn{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0;pointer-events:none}
+.oitem span{display:block;letter-spacing:.04em}
+
+.thumb .slide{animation:none!important}
+.thumb .frag{opacity:1!important;translate:0 0!important}
+.thumb .mark::before{animation:none!important;transform:scaleX(1)!important}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .mark::before{transform:scaleX(1)!important}
+}
+/* ===== åbner ===== */
+:root{--cmyk:#FFDDDD}
+.s-opener{background:var(--blue)}
+.s-opener::before,.s-opener::after{display:none}
+.s-opener svg.bench{position:absolute;inset:0;width:100%;height:100%;overflow:visible;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.s-opener .s{stroke-dasharray:1;stroke-dashoffset:0}
+.s-opener .thin{stroke-width:1.2;opacity:.8}
+.s-opener text{fill:#fff;stroke:none;font-family:Outfit,Inter,sans-serif;font-weight:600;font-size:22px;letter-spacing:.03em;text-anchor:middle}
+.s-opener .old text.lbl{fill:rgba(255,255,255,.85)}
+.s-opener .new text.lbl{fill:var(--cmyk)}
+.s-opener .strike{stroke:#fff;stroke-width:3}
+.s-opener .old{transition:transform .35s ease-out}
+.s-opener .old.lift{transform:translateY(-18px)}
+.s-opener .old.out{transform:translate(var(--dx),var(--dy));transition:transform .65s cubic-bezier(.55,0,1,.65)}
+.s-opener .rt text{font-size:16px;opacity:.7;font-family:Inter,sans-serif;font-weight:500}
+.s-opener .otitle{position:absolute;left:50%;top:450px;transform:translate(-50%,-50%);text-align:center;z-index:2}
+.s-opener .otitle h1{font-size:68px;line-height:1.1;color:#fff;letter-spacing:-.015em}
+.s-opener .uline{position:relative;display:inline-block}
+.s-opener .uline svg{position:absolute;left:-6%;bottom:-.2em;width:112%;height:.28em;overflow:visible}
+.s-opener .uline path{fill:none;stroke:var(--cmyk);stroke-width:7;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
+.s-opener.active .uline path{animation:uldraw .9s 1s cubic-bezier(.6,.1,.2,1) forwards}
+@keyframes uldraw{to{stroke-dashoffset:0}}
+.s-opener .ocount{position:absolute;left:50%;top:640px;transform:translateX(-50%);z-index:2;font:700 60px/1 Outfit,sans-serif;color:var(--yellow);opacity:0;display:flex;align-items:baseline;gap:8px}
+.s-opener .ocount span{font-size:24px;font-weight:600;opacity:.8}
+.s-opener .ocount.on{opacity:1}
+.s-opener .ocount.pop b{animation:pop .35s ease-out}
+@keyframes pop{0%{transform:scale(1.5)}100%{transform:scale(1)}}
+.thumb .s-opener .uline path{animation:none!important;stroke-dashoffset:0!important}
+@media (prefers-reduced-motion:reduce){.s-opener .uline path{stroke-dashoffset:0!important}}
+/* ===== /åbner ===== */
+</style>
+</head>
+<body>
+
+<div id="stage">
+
+<!-- 0 · ÅBNER -->
+<section class="slide s-opener" id="opener" data-title="Åbner"
+  data-notes="Åbneren kører, mens folk sætter sig. Ti gamle værktøjer tegnes, og ét ad gangen bliver de skiftet ud med nye: laptop, Claude, agent, SharePoint. Der tælles op til ti, så holder den fem sekunder, og så starter den forfra. Tryk pil højre, når I går i gang.">
+  <svg class="bench" viewBox="0 0 1600 900" aria-hidden="true">
+    <g class="bg">
+      <path class="s" pathLength="1" d="M800 140a310 310 0 1 0 0.01 0"/>
+      <path class="s" pathLength="1" d="M800 180a270 270 0 1 0 0.01 0"/>
+      <g class="rt">
+        <path class="s" pathLength="1" d="M70 260V640"/>
+        <path class="s thin" pathLength="1" d="M70 260H96M70 279H84M70 298H84M70 317H84M70 336H84M70 355H96M70 374H84M70 393H84M70 412H84M70 431H84M70 450H96M70 469H84M70 488H84M70 507H84M70 526H84M70 545H96M70 564H84M70 583H84M70 602H84M70 621H84M70 640H96"/>
+        <text x="112" y="266" style="text-anchor:start">0</text>
+        <text x="112" y="646" style="text-anchor:start">20</text>
+      </g>
+    </g>
+    <g class="tools"></g>
+  </svg>
+  <div class="otitle"><h1>Retningslinjer<br>for <span class="uline">AI<svg viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 12 C25 4,50 16,75 8 S92 8,98 10"/></svg></span> i Colibo</h1></div>
+  <div class="ocount"><b>00</b><span>/10</span></div>
+</section>
+<!-- /ÅBNER -->
+
+<!-- 1 · TITEL -->
+<section class="slide s-title" data-title="Retningslinjer for AI i Colibo"
+  data-notes="Velkommen. Det her er en kort intro til vores AI-projekt og til nogle få retningslinjer. Vi bruger ca. 15 minutter, og der er plads til spørgsmål til sidst. Ferdinand og Mogens supplerer undervejs.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <svg class="art draw" viewBox="0 0 640 700" aria-hidden="true">
+    <circle class="thin" cx="320" cy="350" r="290" stroke-dasharray="4 10"/>
+    <circle class="thin" cx="320" cy="350" r="190" stroke-dasharray="2 8"/>
+    <path class="thin" d="M30 350H610M320 60V640"/>
+    <circle cx="320" cy="350" r="46"/><circle cx="320" cy="350" r="14"/>
+    <path d="M320 304V164M366 350H500M320 396V540M274 350H140"/>
+    <circle cx="320" cy="140" r="26"/><circle cx="524" cy="350" r="26"/>
+    <circle cx="320" cy="564" r="26"/><circle cx="116" cy="350" r="26"/>
+    <path d="M338 158L506 332M502 368L338 546M302 546L134 368M134 332L302 158" class="thin dash"/>
+    <path d="M300 140h40M320 120v40M504 350h40M524 330v40M300 564h40M320 544v40M96 350h40M116 330v40" class="thin"/>
+  </svg>
+  <div class="content">
+    <div>
+      <div class="kicker">Colibo · Månedsmøde · Oktober 2026</div>
+      <h1>Retningslinjer for <span class="mark">AI</span> i Colibo</h1>
+      <div class="tsub">Kort intro til AI-projektet</div>
+    </div>
+    <div class="foot"><div class="divider"></div><span>CA. 15 MIN</span></div>
+  </div>
+</section>
+
+<!-- 2 · DIVIDER 1 -->
+<section class="slide s-divider" data-title="Del 1: Hvorfor"
+  data-notes="Første del: hvorfor vi gør det her. Det tager et par minutter.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="part"><div class="num">01</div><div class="kicker">Del 1</div></div>
+    <h1><span class="mark">Hvorfor</span> det her</h1>
+    <div class="rule"></div>
+    <div class="tag">Én samlet knowledge base</div>
+  </div>
+</section>
+
+<!-- 3 · STOR OVERSKRIFT -->
+<section class="slide s-big" data-title="Ét sted at lede"
+  data-notes="Vi har lavet et nyt websted på SharePoint, der hedder Colibo. Det er vores knowledge base, og det skal være one single source of truth. Grunden er, at vi nu bruger Claude til at lave nye tilbud ud fra den viden, der ligger i knowledge basen, og ud fra HubSpot. Ferdinand bruger allerede knowledge basen på samme måde som Tender Writer. Så skal viden være entydig og ligge ét sted.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="kicker">Knowledge base</div>
+    <h1>Ét sted at <span class="mark">lede</span></h1>
+    <div class="sub">Colibo er vores single source of truth. Claude laver nu tilbud ud fra videnbasen og HubSpot, og Ferdinand bruger den allerede.</div>
+  </div>
+</section>
+
+<!-- 4 · KORT -->
+<section class="slide s-cards" data-title="Hvad vi får ud af det"
+  data-notes="Tre ting vi får ud af det. Ingen dubletter: informationen står ét sted. Ingen tvetydighed: ét klart svar. Og en rigtig god bivirkning: Teamwebsted bliver også ryddet op. Til sidst en note: ikke alt flytter. Fx dokumentation i koden bliver, hvor den er. Fire klik: tre kort og noten.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="kicker">Gevinsten</div>
+    <h2>Hvad vi <span class="mark">får</span> ud af det</h2>
+    <div class="cards" style="--n:3">
+      <div class="card frag"><div class="num">01</div><div class="rule"></div><h3>Ingen dubletter</h3><p>Informationen står ét sted, så ingen skal gætte på, hvilken version der gælder.</p></div>
+      <div class="card frag"><div class="num">02</div><div class="rule"></div><h3>Ingen tvetydighed</h3><p>Ét klart svar i stedet for flere, der peger i hver sin retning.</p></div>
+      <div class="card frag"><div class="num">03</div><div class="rule"></div><h3>Ryddet Teamwebsted</h3><p>En rigtig god bivirkning: Teamwebsted bliver også ryddet op.</p></div>
+    </div>
+    <div class="sidenote frag" style="margin-top:36px">Ikke alt flytter – dokumentation i koden bliver, hvor den er.</div>
+  </div>
+</section>
+
+<!-- 5 · DIVIDER 2 -->
+<section class="slide s-divider" data-title="Del 2: Sådan gør vi"
+  data-notes="Anden del: hvad det betyder i hverdagen.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="part"><div class="num">02</div><div class="kicker">Del 2</div></div>
+    <h1>Sådan <span class="mark">gør</span> vi</h1>
+    <div class="rule"></div>
+    <div class="tag">Fra princip til hverdag</div>
+  </div>
+</section>
+
+<!-- 6 · BILLEDE: tegnet flow -->
+<section class="slide s-diagram" data-title="Claude desktop og Colibo"
+  data-notes="Vi bruger primært Claude desktop-appen. Har du den ikke, så installér den. Dokumenterne ligger på Colibo-webstedet og synkroniseres, så Claude og vi andre arbejder ud fra de samme dokumenter.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="kicker">Arbejdsgang</div>
+    <h2><span class="mark">Claude</span> desktop og Colibo</h2>
+    <div class="sub">Installér Claude desktop, hvis du ikke har den. Dokumenterne ligger på Colibo og synkroniseres.</div>
+    <svg class="fig draw" viewBox="0 0 1000 300" preserveAspectRatio="xMidYMid meet" aria-label="Flow: dokumenter til Colibo-webstedet, som synkroniserer med Claude desktop">
+      <path d="M40 90H100L120 110V200H40Z M100 90V110H120"/>
+      <path class="thin" d="M56 138H104M56 158H104M56 178H90"/>
+      <text x="80" y="236" text-anchor="middle">Dokumenter</text>
+      <path d="M140 150H300"/><path d="M290 143l10 7-10 7"/>
+      <rect x="320" y="85" width="280" height="130"/>
+      <path class="thin" d="M310 85h-10M320 75v-10M610 85h10M600 75v-10M310 215h-10M320 225v10M610 215h10M600 225v10"/>
+      <text class="hd" x="460" y="143" text-anchor="middle">COLIBO-WEBSTEDET</text>
+      <text class="dm" x="460" y="173" text-anchor="middle">SharePoint</text>
+      <path d="M620 150H760"/><path d="M630 143l-10 7 10 7"/><path d="M750 143l10 7-10 7"/>
+      <text class="cap" x="690" y="123" text-anchor="middle">synk</text>
+      <rect x="780" y="85" width="190" height="130"/>
+      <text class="hd" x="875" y="143" text-anchor="middle">CLAUDE</text>
+      <text x="875" y="173" text-anchor="middle">desktop</text>
+    </svg>
+  </div>
+</section>
+
+<!-- 7 · KORT -->
+<section class="slide s-cards" data-title="Hvem ejer hvad"
+  data-notes="Ikke alle skal flytte filer. Jeg er overordnet ansvarlig til at starte med. Så er der mappeejere, fx Mogens og Ferdinand, som er ansvarlige for en mappe eller et dokument på Colibo og begynder at flytte filer fra Teamwebsted. Resten af jer bliver involveret løbende, og hvis I har noget relevant, så sig det til mig eller Ferdinand. Tre klik, ét kort ad gangen.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="kicker">Ansvar</div>
+    <h2>Hvem <span class="mark">ejer</span> hvad</h2>
+    <div class="cards" style="--n:3">
+      <div class="card frag"><div class="num">01</div><div class="rule"></div><h3>Morten</h3><p>Overordnet ansvarlig fra start.</p></div>
+      <div class="card frag"><div class="num">02</div><div class="rule"></div><h3>Mappeejere</h3><p>Fx Mogens og Ferdinand. Ejere af en mappe eller et dokument flytter filer fra Teamwebsted til Colibo.</p></div>
+      <div class="card frag"><div class="num">03</div><div class="rule"></div><h3>Resten af os</h3><p>Du bliver involveret, når det er din tur. Har du noget relevant, så sig det til Morten eller Ferdinand.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 · DIVIDER 3 -->
+<section class="slide s-divider" data-title="Del 3: Spilleregler"
+  data-notes="Sidste del: tre regler og hvad der sker bagefter.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="part"><div class="num">03</div><div class="kicker">Del 3</div></div>
+    <h1><span class="mark">Spilleregler</span></h1>
+    <div class="rule"></div>
+    <div class="tag">Det korte, I skal huske</div>
+  </div>
+</section>
+
+<!-- 9 · KORT -->
+<section class="slide s-cards" data-title="Tre regler"
+  data-notes="Tre regler. Én: de samme regler, der altid gælder i Colibo, gælder også med AI. To: giv ikke kunders kundedata til Claude. Tre, og den vil jeg gerne understrege: du læser altid selv faktuel korrektur på det, Claude leverer. Tre klik, ét kort ad gangen.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="kicker">Spilleregler</div>
+    <h2>Tre <span class="mark">regler</span></h2>
+    <div class="cards" style="--n:3">
+      <div class="card frag"><div class="num">01</div><div class="rule"></div><h3>Samme regler som altid</h3><p>Colibos almindelige regler gælder også, når du bruger AI.</p></div>
+      <div class="card frag"><div class="num">02</div><div class="rule"></div><h3>Ingen kundedata</h3><p>Giv ikke kunders kundedata til Claude.</p></div>
+      <div class="card frag"><div class="num">03</div><div class="rule"></div><h3>Læs selv korrektur</h3><p>Tjek altid fakta i det, Claude leverer. Du står inde for resultatet.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · DET NÆSTE + SPØRGSMÅL -->
+<section class="slide s-big" data-title="Det næste, og spørgsmål"
+  data-notes="Arbejdet fortsætter med de næste projekter. Det er ikke helt fastlagt, men det kan fx være design og kommunikation. Hvis I har spørgsmål nu eller senere, så tag fat i mig eller Ferdinand. Tak.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="kicker">Det næste</div>
+    <h1 style="font-size:100px">Fx <span class="mark">design</span> og kommunikation</h1>
+    <div class="sub">Spørgsmål? Tag fat i Morten eller Ferdinand.</div>
+  </div>
+</section>
+
+</div>
+
+<div id="bar" aria-label="Styring">
+  <button id="prev" aria-label="Forrige">◀</button>
+  <span id="pos">1 / 1</span>
+  <button id="next" aria-label="Næste">▶</button>
+</div>
+<div id="overview" role="dialog" aria-label="Oversigt"><h2>Oversigt · tryk M eller Esc for at lukke</h2><div class="ogrid" id="ogrid"></div></div>
+
+<script>
+(function(){
+  var stage=document.getElementById('stage');
+  var slides=[].slice.call(stage.querySelectorAll('.slide'));
+  var bar=document.getElementById('bar'),pos=document.getElementById('pos');
+  var overview=document.getElementById('overview'),ogrid=document.getElementById('ogrid');
+  var cur=0,f=0,pw=null,pwStart=0,pwTimer=null;
+
+  /* orange markering: tre håndtegnede varianter */
+  var paths=['M4 18 C60 6,120 24,180 12 S270 14,296 16','M4 16 C70 24,130 8,200 16 S268 20,296 10','M4 20 C56 10,124 24,190 14 S272 10,296 18'];
+  [].forEach.call(stage.querySelectorAll('.mark'),function(m,i){
+    var s=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    s.setAttribute('viewBox','0 0 300 30');s.setAttribute('preserveAspectRatio','none');s.setAttribute('aria-hidden','true');
+    var p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('pathLength','1');p.setAttribute('d',paths[i%3]);s.appendChild(p);m.appendChild(s);
+  });
+
+  function fit(){var s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform='translate(-50%,-50%) scale('+s+')'}
+  function frags(i){return slides[i].querySelectorAll('.frag')}
+  function paintFrags(){[].forEach.call(frags(cur),function(el,k){el.classList.toggle('in',k<f)})}
+
+  function go(n,showAll){
+    n=Math.max(0,Math.min(slides.length-1,n));
+    if(n!==cur||!slides[cur].classList.contains('active')){
+      slides.forEach(function(s){s.classList.remove('active')});
+      cur=n;
+      void slides[cur].offsetWidth;
+      slides[cur].classList.add('active');
+    }
+    f=showAll?frags(cur).length:0;
+    paintFrags();update();
+  }
+  function next(){if(f<frags(cur).length){f++;paintFrags();update()}else if(cur<slides.length-1){go(cur+1,false)}}
+  function prev(){if(f>0){f--;paintFrags();update()}else if(cur>0){go(cur-1,true)}}
+
+  function update(){
+    pos.textContent=(cur+1)+' / '+slides.length;
+    document.title=slides[cur].dataset.title+' · Colibo';
+    try{history.replaceState(null,'','#s'+(cur+1))}catch(e){}
+    presenterUpdate();
+  }
+
+  /* ---------- oversigt ---------- */
+  function buildOverview(){
+    ogrid.innerHTML='';
+    slides.forEach(function(sl,i){
+      var b=document.createElement('button');b.className='oitem'+(i===cur?' cur':'');
+      var tw=document.createElement('div');tw.className='tw thumb';
+      var tn=document.createElement('div');tn.className='tn';
+      var c=sl.cloneNode(true);c.classList.add('active');tn.appendChild(c);tw.appendChild(tn);
+      var cap=document.createElement('span');cap.textContent=(i+1)+' · '+sl.dataset.title;
+      b.appendChild(tw);b.appendChild(cap);
+      b.addEventListener('click',function(){closeOverview();go(i,false)});
+      ogrid.appendChild(b);
+    });
+    var w=ogrid.firstChild.querySelector('.tw').clientWidth||300;
+    [].forEach.call(ogrid.querySelectorAll('.tn'),function(t){t.style.transform='scale('+(w/1600)+')'});
+  }
+  function openOverview(){overview.classList.add('open');buildOverview();var c=ogrid.querySelector('.cur');if(c){c.focus();c.scrollIntoView({block:'center'})}}
+  function closeOverview(){overview.classList.remove('open')}
+  function toggleOverview(){overview.classList.contains('open')?closeOverview():openOverview()}
+
+  /* ---------- presenter-vindue ---------- */
+  function openPresenter(){
+    if(pw&&!pw.closed){pw.focus();return}
+    pw=window.open('','colibo-presenter','width=1000,height=640');
+    if(!pw){return}
+    var d=pw.document;
+    d.open();
+    d.write('<!doctype html><html lang="da"><head><meta charset="utf-8"><title>Presenter</title></head><body></body></html>');
+    d.close();
+    [].forEach.call(document.head.querySelectorAll('link[rel=stylesheet],link[rel=preconnect],style'),function(n){d.head.appendChild(d.importNode(n,true))});
+    var st=d.createElement('style');
+    st.textContent='html,body{height:100%;overflow:auto;background:#0a0040}body{padding:22px;display:grid;grid-template-columns:1fr 360px;gap:26px;align-items:start}'+
+      '#pn{font:400 15px "JetBrains Mono";letter-spacing:.14em;color:#8FE0B8;text-transform:uppercase}'+
+      '#pt{font:800 34px/1.1 Epilogue,sans-serif;margin:10px 0 22px;color:#FDFBF5}'+
+      '#nt{font:400 24px/1.55 "JetBrains Mono",monospace;color:#FDFBF5;white-space:pre-wrap}'+
+      '#nx{font:400 14px "JetBrains Mono";letter-spacing:.14em;color:rgba(253,251,245,.62);text-transform:uppercase;margin-bottom:8px}'+
+      '#tw{position:relative;width:360px;height:202.5px;overflow:hidden;border:1px solid rgba(253,251,245,.62)}'+
+      '#tn{position:absolute;left:0;top:0;width:1600px;height:900px;transform:scale(.225);transform-origin:0 0}'+
+      '#nxt{font:700 16px "JetBrains Mono";margin-top:10px;color:#FDFBF5}'+
+      '#tm{font:700 44px "JetBrains Mono";margin-top:30px;color:#F2F1EB;letter-spacing:.06em}'+
+      '#hint{font:400 13px/1.6 "JetBrains Mono";color:rgba(253,251,245,.62);margin-top:22px}'+
+      '.thumb .slide{animation:none!important}.thumb .frag{opacity:1!important;translate:0 0!important}.thumb .mark path{animation:none!important;stroke-dashoffset:0!important}';
+    d.head.appendChild(st);
+    d.body.innerHTML='<div><div id="pn"></div><div id="pt"></div><div id="nt"></div></div>'+
+      '<div><div id="nx">Næste slide</div><div id="tw" class="thumb"><div id="tn"></div></div><div id="nxt"></div>'+
+      '<div id="tm">00:00</div><div id="hint">Pile / mellemrum / Page Down–Up styrer decket herfra.</div></div>';
+    pw.addEventListener('keydown',handleKey);
+    pwStart=Date.now();
+    clearInterval(pwTimer);
+    pwTimer=setInterval(function(){
+      if(!pw||pw.closed){clearInterval(pwTimer);return}
+      var s=Math.floor((Date.now()-pwStart)/1000),m=Math.floor(s/60),el=pw.document.getElementById('tm');
+      if(el)el.textContent=('0'+m).slice(-2)+':'+('0'+(s%60)).slice(-2);
+    },1000);
+    presenterUpdate();
+  }
+  function presenterUpdate(){
+    if(!pw||pw.closed)return;
+    var d=pw.document,sl=slides[cur];
+    var $=function(id){return d.getElementById(id)};
+    if(!$('pn'))return;
+    var nf=frags(cur).length;
+    $('pn').textContent='Slide '+(cur+1)+' / '+slides.length+(nf?' · klik '+f+' / '+nf:'');
+    $('pt').textContent=sl.dataset.title;
+    $('nt').textContent=sl.dataset.notes||'';
+    var tn=$('tn');tn.innerHTML='';
+    if(cur<slides.length-1){
+      var c=slides[cur+1].cloneNode(true);c.classList.add('active');tn.appendChild(d.importNode(c,true));
+      $('nxt').textContent=slides[cur+1].dataset.title;
+    }else{$('nxt').textContent='Slut på decket'}
+  }
+
+  /* ---------- tastatur ---------- */
+  function handleKey(e){
+    if(e.ctrlKey||e.metaKey||e.altKey)return;
+    var k=e.key;
+    if(overview.classList.contains('open')){
+      if(k==='Escape'||k==='m'||k==='M'){e.preventDefault();closeOverview()}
+      return;
+    }
+    if(k==='ArrowRight'||k===' '||k==='PageDown'){e.preventDefault();next()}
+    else if(k==='ArrowLeft'||k==='PageUp'){e.preventDefault();prev()}
+    else if(k==='f'||k==='F'){e.preventDefault();
+      if(document.fullscreenElement){document.exitFullscreen()}else if(document.documentElement.requestFullscreen){document.documentElement.requestFullscreen()}}
+    else if(k==='m'||k==='M'){e.preventDefault();toggleOverview()}
+    else if(k==='p'||k==='P'){e.preventDefault();openPresenter()}
+  }
+  addEventListener('keydown',handleKey);
+
+  /* ---------- mus: styring nederst, skjult markør ---------- */
+  var hideT=null;
+  function mouse(e){
+    document.body.classList.remove('nocursor');
+    bar.classList.toggle('show',e.clientY>innerHeight-90);
+    clearTimeout(hideT);
+    hideT=setTimeout(function(){document.body.classList.add('nocursor');bar.classList.remove('show')},2000);
+  }
+  addEventListener('mousemove',mouse);
+  document.documentElement.addEventListener('mouseleave',function(){bar.classList.remove('show')});
+  document.getElementById('prev').addEventListener('click',prev);
+  document.getElementById('next').addEventListener('click',next);
+  hideT=setTimeout(function(){document.body.classList.add('nocursor')},2000);
+
+  /* ---------- adresse: #s5 ---------- */
+  function fromHash(){var m=/^#s(\d+)$/.exec(location.hash);return m?parseInt(m[1],10)-1:null}
+  addEventListener('hashchange',function(){var n=fromHash();if(n!==null&&n!==cur)go(n,false)});
+
+  addEventListener('resize',fit);
+  fit();
+  var h=fromHash();go(h===null?0:h,false);
+})();
+</script>
+
+<script id="opener-js">
+(function(){
+  var sec=document.getElementById('opener');
+  if(!sec)return;
+  var NS='http://www.w3.org/2000/svg';
+  var CX=800,CY=450;
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function ticks(x0,x1,step,y,sh,lg,every){var d='',n=0;for(var x=x0;x<=x1;x+=step,n++){d+='M'+x+' '+y+'v'+(n%every===0?lg:sh)}return d}
+  function spark(){var out=[],n=12;for(var i=0;i<n;i++){var a=i/n*Math.PI*2,r1=14,r2=[66,48,60,44,70,50][i%6];
+      out.push('M'+(Math.cos(a)*r1).toFixed(1)+' '+(Math.sin(a)*r1).toFixed(1)+'L'+(Math.cos(a)*r2).toFixed(1)+' '+(Math.sin(a)*r2).toFixed(1))}return [out.join('')]}
+  function circ(x,y,r){return 'M'+(x-r)+' '+y+'a'+r+' '+r+' 0 1 0 '+(2*r)+' 0a'+r+' '+r+' 0 1 0 '+(-2*r)+' 0'}
+
+  /* gamle værktøjer: sti, position, skala, drejning, placering af navn */
+  var OLD=[
+    {n:'Hammer',  x:190, y:150,s:.85,r:-35,ly:92,d:['M-120 -8H40V8H-120Z','M40 -36H96V36H40Z','M96 -28C120 -28 140 -14 156 0C140 14 120 28 96 28','M-100 0H20']},
+    {n:'Sav',     x:600, y:80, s:.72,r:6,   ly:78,d:['M-170 6V-6L60 -36V36','M-170 6L-155 14L-150 8L-135 16L-130 10L-115 18L-110 12L-95 20L-90 14L-75 22L-70 16L-55 24L-50 18L-35 26L-30 20L-15 28L-10 22L5 30L10 24L25 32L30 26L45 34L50 28L60 36','M60 -36H110C130 -36 140 -20 140 0C140 20 130 36 110 36H60','M82 -12H114V12H82Z']},
+    {n:'Lineal',  x:1000,y:80, s:.78,r:-4,  ly:78,d:['M-150 -22H150V22H-150Z',ticks(-140,140,10,-22,8,18,5)]},
+    {n:'Vaterpas',x:1410,y:150,s:.8, r:32,  ly:92,d:['M-150 -20H150V20H-150Z','M-44 -9H44V9H-44Z',circ(0,0,6),'M-16 -9V9M16 -9V9',circ(-112,0,8),circ(112,0,8)]},
+    {n:'Tang',    x:240, y:450,s:.85,r:-8,  ly:150,d:['M-8 10L-72 124L-52 134L6 24','M8 10L72 124L52 134L-6 24','M-8 -10C-14 -40 -10 -70 -2 -90L0 -96L2 -90C10 -70 14 -40 8 -10','M0 -82V-12',circ(0,0,10)]},
+    {n:'Skruetrækker',x:1360,y:450,s:.8,r:90,ly:150,d:['M-150 -22H-70C-50 -22 -50 22 -70 22H-150C-165 22 -165 -22 -150 -22Z','M-135 -22V22M-115 -22V22M-95 -22V22','M-60 -7H100M-60 7H100','M100 -7L140 -3V3L100 7']},
+    {n:'Mejsel',  x:190, y:770,s:.75,r:-32, ly:78,d:['M-150 -14H-50L-40 -10V10L-50 14H-150Z','M-40 -12V12M-28 -12V12','M-28 -10H130L150 8L130 10H-28Z','M130 -10L150 8']},
+    {n:'Skruenøgle',x:600,y:800,s:.62,r:-6,ly:64,d:['M-100 -14H100M-100 14H100','M-100 -14H-120L-150 -34H-175V-8H-150V8H-175V34H-150L-120 14H-100','M100 -14L112 -30A30 30 0 1 1 112 30L100 14',circ(138,0,13)]},
+    {n:'Passer',  x:1000,y:800,s:.7,r:80,  ly:66,d:['M-6 -94L-58 108L-60 126','M6 -94L58 108','M-34 22Q0 38 34 22','M-6 -100V-132H6V-100',circ(0,-94,8)]},
+    {n:'Høvl',    x:1410,y:760,s:.7, r:-20, ly:92,d:['M-160 36H160','M-160 36V6H-60L-40 -34H-6L10 6H160V36','M-130 6C-130 -50 -92 -58 -82 -8','M110 6C110 -28 130 -32 142 -18','M-12 -26L38 30']}
+  ];
+  var NEW=[
+    {n:'Laptop',d:['M-90 -60H90V40H-90Z','M-76 -48H76V28H-76Z','M-100 40L-122 62H122L100 40','M-24 62H24']},
+    {n:'Claude',d:spark()},
+    {n:'Agent',d:['M-56 -36H56V48H-56Z','M0 -36V-66',circ(0,-76,9),circ(-24,0,10),circ(24,0,10),'M-26 26H26','M-56 -6H-70V22H-56M56 -6H70V22H56']},
+    {n:'SharePoint',d:[circ(-26,-8,40),circ(26,-8,40),circ(0,30,40)]},
+    {n:'HubSpot',d:[circ(0,0,22),'M0 -22V-68',circ(0,-80,12),'M19 11L56 32',circ(66,38,12),'M-19 11L-56 32',circ(-66,38,12)]},
+    {n:'Connector',d:['M-30 -20H30V30C30 52 -30 52 -30 30Z','M-14 -20V-52M14 -20V-52','M0 48C0 84 40 78 40 112']},
+    {n:'Videnbase',d:['M-60 -40a60 20 0 1 0 120 0a60 20 0 1 0 -120 0','M-60 -40V50M60 -40V50','M-60 5a60 20 0 0 0 120 0','M-60 50a60 20 0 0 0 120 0']},
+    {n:'Prompt',d:['M-80 -50H80V30H-20L-50 60V30H-80Z','M-50 -26L-26 -10L-50 6','M-12 8H20']},
+    {n:'Dokument',d:['M-50 -70H20L50 -40V70H-50Z','M20 -70V-40H50','M-30 -16H30M-30 6H30M-30 28H10']},
+    {n:'Tilbud',d:['M-60 -66H30L60 -36V66H-60Z','M30 -66V-36H60','M-30 4L-8 28L32 -14','M-34 46H34']}
+  ];
+  var ORDER=[4,8,1,6,0,9,3,7,2,5];   /* rækkefølgen af udskiftninger */
+
+  var toolsG=sec.querySelector('g.tools'),bg=sec.querySelector('g.bg'),title=sec.querySelector('.otitle'),cnt=sec.querySelector('.ocount');
+  function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+
+  var slots=[];
+  OLD.forEach(function(o,i){
+    var slot=el('g',{transform:'translate('+o.x+' '+o.y+')'},toolsG);
+    var dx=o.x-CX,dy=o.y-CY,L=Math.sqrt(dx*dx+dy*dy)||1;
+    var rec={slot:slot,o:o};
+    ['old','new'].forEach(function(kind){
+      var data=kind==='old'?o:NEW[i];
+      var g=el('g',{'class':kind},slot);
+      if(kind==='old'){g.style.setProperty('--dx',(dx/L*1500).toFixed(0)+'px');g.style.setProperty('--dy',(dy/L*1500).toFixed(0)+'px')}
+      var art=el('g',{transform:kind==='old'?'rotate('+o.r+') scale('+o.s+')':'scale(.85)'},g);
+      data.d.forEach(function(d){el('path',{'class':'s',pathLength:1,d:d},art)});
+      var t=el('text',{'class':'lbl',y:o.ly},g);t.textContent=data.n;
+      rec[kind]=g;rec[kind+'Paths']=[].slice.call(g.querySelectorAll('path.s'));rec[kind+'Lbl']=t;
+    });
+    var bb={width:o.n.length*13.5};   /* sliden er skjult ved opbygning, så getBBox er ikke brugbar */
+    rec.strike=el('path',{'class':'s strike',pathLength:1,d:'M'+(-bb.width/2-8)+' '+(o.ly-7)+'L'+(bb.width/2+8)+' '+(o.ly-10)},rec.old);
+    slots.push(rec);
+  });
+
+  var timers=[];
+  function at(ms,fn){timers.push(setTimeout(fn,ms))}
+  function clear(){timers.forEach(clearTimeout);timers=[]}
+
+  function setPaths(paths,state,delay,step,dur){
+    paths.forEach(function(p,k){
+      p.style.transition='none';
+      p.style.strokeDashoffset=state?1:0;
+    });
+    if(state){void sec.offsetWidth;}
+  }
+  function drawIn(paths,delay,step,dur){
+    paths.forEach(function(p,k){
+      p.style.transition='stroke-dashoffset '+dur+'ms linear '+(delay+k*step)+'ms';
+      p.style.strokeDashoffset=0;
+    });
+    return delay+(paths.length-1)*step+dur;
+  }
+
+  function staticState(){
+    clear();
+    bg.querySelectorAll('path.s').forEach(function(p){p.style.transition='none';p.style.strokeDashoffset=0});
+    slots.forEach(function(r){
+      r.old.classList.remove('lift','out');r.old.style.opacity=1;
+      r.oldPaths.concat([r.strike]).forEach(function(p){p.style.transition='none';p.style.strokeDashoffset=p===r.strike?1:0});
+      r.oldLbl.style.transition='none';r.oldLbl.style.opacity=1;
+      r.newPaths.forEach(function(p){p.style.transition='none';p.style.strokeDashoffset=1});
+      r.newLbl.style.transition='none';r.newLbl.style.opacity=0;
+    });
+    toolsG.style.transition='none';toolsG.style.opacity=1;
+    cnt.classList.remove('on','pop');
+  }
+  function blank(){
+    staticState();
+    bg.querySelectorAll('path.s').forEach(function(p){p.style.strokeDashoffset=1});
+    slots.forEach(function(r){r.oldPaths.forEach(function(p){p.style.strokeDashoffset=1});r.oldLbl.style.opacity=0});
+    void sec.offsetWidth;
+  }
+
+  function swap(k){
+    var r=slots[ORDER[k]];
+    cnt.querySelector('b').textContent=('0'+(k+1)).slice(-2);
+    cnt.classList.add('on');cnt.classList.remove('pop');void cnt.offsetWidth;cnt.classList.add('pop');
+    r.old.classList.add('lift');
+    r.strike.style.transition='stroke-dashoffset 260ms linear 120ms';r.strike.style.strokeDashoffset=0;
+    at(0,function(){});
+    var t1=setTimeout(function(){r.old.classList.remove('lift');r.old.classList.add('out')},420);
+    var t2=setTimeout(function(){
+      r.newLbl.style.transition='opacity .3s ease 0s';
+      var end=drawIn(r.newPaths,0,150,260);
+      setTimeout(function(){r.newLbl.style.opacity=1},Math.max(0,end-260));
+    },700);
+    timers.push(t1,t2);
+  }
+
+  function run(){
+    blank();
+    var DRAW0=700,STEP_T=360;
+    /* cirkler og målestreg */
+    bg.querySelectorAll('path.s').forEach(function(p,k){p.style.transition='stroke-dashoffset 1100ms ease-in-out '+(k*120)+'ms';p.style.strokeDashoffset=0});
+    var end=0;
+    slots.forEach(function(r,i){
+      var d=DRAW0+i*STEP_T;
+      at(d,function(){var e=drawIn(r.oldPaths,0,170,260);r.oldLbl.style.transition='opacity .3s ease '+e+'ms';r.oldLbl.style.opacity=1});
+      end=Math.max(end,d+(r.oldPaths.length-1)*170+260);
+    });
+    var t0=end+3000;
+    for(var k=0;k<10;k++)(function(k){at(t0+k*1000,function(){swap(k)})})(k);
+    var done=t0+9000+700+(4*150+260)+300;
+    at(done+5000,function(){
+      toolsG.style.transition='opacity .5s ease';toolsG.style.opacity=0;cnt.classList.remove('on');
+      at(600,run);
+    });
+  }
+
+  function onClass(){
+    if(sec.classList.contains('active')){ if(reduce){staticState()}else{run()} }
+    else{ staticState() }
+  }
+  var was=sec.classList.contains('active');
+  new MutationObserver(function(){
+    var now=sec.classList.contains('active');
+    if(now!==was){was=now;onClass()}
+  }).observe(sec,{attributes:true,attributeFilter:['class']});
+  staticState();
+  if(was)onClass();
+})();
+</script>
+</body>
+</html>

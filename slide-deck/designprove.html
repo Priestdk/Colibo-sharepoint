@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blå blueprint – designprøve</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Epilogue:wght@800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#2500FF;
+  --pink:#E8E6DE;
+  --chalk:#FDFBF5;
+  --chalk-dim:rgba(253,251,245,.62);
+  --yellow:#F2F1EB;
+  --mint:#8FE0B8;
+  --marker:#FF7A1A;          /* orange signatur-markering */
+  --grid-major:rgba(253,251,245,.10);
+  --grid-minor:rgba(253,251,245,.04);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#0a0040;overflow:hidden}
+body{position:relative;font-family:'JetBrains Mono',monospace;color:var(--chalk)}
+
+/* 1920×1080 scene, skaleres til vinduet */
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform:translate(-50%,-50%);transform-origin:center;overflow:hidden;background:var(--blue)}
+.slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .5s ease;
+  background:
+    linear-gradient(var(--grid-major) 1px,transparent 1px) 0 0/100px 100px,
+    linear-gradient(90deg,var(--grid-major) 1px,transparent 1px) 0 0/100px 100px,
+    linear-gradient(var(--grid-minor) 1px,transparent 1px) 0 0/20px 20px,
+    linear-gradient(90deg,var(--grid-minor) 1px,transparent 1px) 0 0/20px 20px,
+    var(--blue);}
+.slide.active{opacity:1;visibility:visible}
+/* mørk vignet mod kanterne */
+.slide::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,40,.55) 100%)}
+/* tynd ramme + hjørnemærker */
+.frame{position:absolute;inset:36px;border:1px solid var(--chalk-dim);pointer-events:none}
+.frame i{position:absolute;width:22px;height:22px;border:0 solid var(--chalk)}
+.frame i:nth-child(1){left:-12px;top:-12px;border-width:2px 0 0 2px}
+.frame i:nth-child(2){right:-12px;top:-12px;border-width:2px 2px 0 0}
+.frame i:nth-child(3){left:-12px;bottom:-12px;border-width:0 0 2px 2px}
+.frame i:nth-child(4){right:-12px;bottom:-12px;border-width:0 2px 2px 0}
+
+.content{position:absolute;inset:36px;padding:96px 120px;z-index:1}
+.kicker{font:700 22px/1 'JetBrains Mono';letter-spacing:.22em;text-transform:uppercase;color:var(--mint)}
+.kicker.alt{color:var(--yellow)}
+h1,h2{font-family:'Epilogue',sans-serif;font-weight:800;letter-spacing:-.025em;line-height:1.02;color:var(--chalk)}
+h1{font-size:150px}
+h2{font-size:104px}
+.mark{position:relative;display:inline-block;white-space:nowrap}
+.mark svg{position:absolute;left:-2%;bottom:-.16em;width:104%;height:.3em;overflow:visible}
+.mark path{fill:none;stroke:var(--marker);stroke-width:9;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:1;stroke-dashoffset:1}
+.slide.active .mark path{animation:draw .9s .55s cubic-bezier(.6,.1,.2,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.note{font-family:'Caveat',cursive;font-weight:500;font-size:44px;color:var(--chalk-dim);line-height:1}
+.divider{height:2px;background:var(--pink);opacity:.9}
+.mono{font-family:'JetBrains Mono',monospace}
+.draw{fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.draw .thin{stroke-width:1;opacity:.6}
+
+/* slide 1 */
+.s1 .content{display:flex;flex-direction:column;justify-content:space-between}
+.s1 h1{margin-top:44px;max-width:1100px}
+.s1 .foot{display:flex;align-items:flex-end;gap:36px}
+.s1 .foot .divider{flex:0 0 160px;margin-bottom:12px}
+.s1 .foot span{color:var(--chalk-dim);font-size:22px;letter-spacing:.12em}
+.s1 .art{position:absolute;right:90px;top:150px;width:640px;height:700px}
+
+/* slide 2 */
+.s2 h2{margin:34px 0 70px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.card{position:relative;padding:44px 40px 48px;border:1px solid var(--chalk-dim);background:rgba(0,0,60,.28);min-height:360px}
+.card .num{font:700 64px/1 'JetBrains Mono';color:var(--mint)}
+.card:nth-child(2) .num{color:var(--yellow)}
+.card h3{font:800 40px/1.1 'Epilogue';margin:34px 0 18px;letter-spacing:-.01em}
+.card p{font-size:23px;line-height:1.5;color:var(--chalk-dim)}
+.card .divider{position:absolute;left:40px;right:40px;top:132px;height:1px;background:var(--pink);opacity:.5}
+.card .tick{position:absolute;right:20px;top:20px;width:34px;height:34px}
+
+/* slide 3 */
+.s3 .content{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:60px}
+.bignum{font:800 400px/0.85 'Epilogue';letter-spacing:-.05em;color:var(--chalk)}
+.bignum small{font-size:200px;color:var(--mint);letter-spacing:0}
+.s3 .label{font-size:26px;letter-spacing:.14em;text-transform:uppercase;color:var(--chalk-dim);margin:36px 0 28px}
+.s3 .right{display:flex;flex-direction:column;gap:30px}
+.s3 h2{font-size:84px}
+.s3 .note{margin-top:10px;transform:rotate(-2deg);color:var(--yellow);font-size:52px}
+
+.pager{position:absolute;right:130px;bottom:62px;z-index:2;font:400 20px 'JetBrains Mono';letter-spacing:.2em;color:var(--chalk-dim)}
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- 1 · TITEL -->
+  <section class="slide s1 active">
+    <div class="frame"><i></i><i></i><i></i><i></i></div>
+    <svg class="art draw" viewBox="0 0 640 700" aria-hidden="true">
+      <!-- blueprint af et fællesskab: knuder forbundet med linjer og mål -->
+      <circle class="thin" cx="320" cy="350" r="290" stroke-dasharray="4 10"/>
+      <circle class="thin" cx="320" cy="350" r="190" stroke-dasharray="2 8"/>
+      <path class="thin" d="M30 350H610M320 60V640"/>
+      <circle cx="320" cy="350" r="46"/><circle cx="320" cy="350" r="14"/>
+      <path d="M320 304V164M366 350H500M320 396V540M274 350H140"/>
+      <circle cx="320" cy="140" r="26"/><circle cx="524" cy="350" r="26"/>
+      <circle cx="320" cy="564" r="26"/><circle cx="116" cy="350" r="26"/>
+      <path d="M338 158L506 332M502 368L338 546M302 546L134 368M134 332L302 158" stroke-dasharray="6 8" class="thin"/>
+      <path d="M300 140h40M320 120v40M504 350h40M524 330v40M300 564h40M320 544v40M96 350h40M116 330v40" class="thin"/>
+      <path d="M40 640h120M40 632v16M160 632v16"/><text x="64" y="620" fill="#fff" stroke="none" font-family="JetBrains Mono" font-size="16" letter-spacing="3">120 PX</text>
+    </svg>
+    <div class="content">
+      <div>
+        <div class="kicker">Colibo · Månedsmøde · Oktober 2026</div>
+        <h1>Det vi bygger<br><span class="mark">sammen<svg viewBox="0 0 300 30" preserveAspectRatio="none"><path pathLength="1" d="M4 20 C60 8, 120 26, 180 14 S270 12, 296 18"/></svg></span></h1>
+      </div>
+      <div class="foot">
+        <div class="divider"></div>
+        <span>DESIGNPRØVE · BLÅ BLUEPRINT</span>
+        <div class="note">version 1 – ikke rigtigt indhold</div>
+      </div>
+    </div>
+    <div class="pager">01 / 03</div>
+  </section>
+
+  <!-- 2 · OVERSKRIFT + TRE KORT -->
+  <section class="slide s2">
+    <div class="frame"><i></i><i></i><i></i><i></i></div>
+    <div class="content">
+      <div class="kicker">Overblik · Denne måned</div>
+      <h2>Tre ting, der <span class="mark">flytter<svg viewBox="0 0 300 30" preserveAspectRatio="none"><path pathLength="1" d="M4 18 C70 6, 130 24, 200 12 S270 16, 296 10"/></svg></span> os</h2>
+      <div class="cards">
+        <div class="card">
+          <svg class="tick draw" viewBox="0 0 34 34"><path d="M2 12V2h10M22 2h10v10M32 22v10H22M12 32H2V22" class="thin"/></svg>
+          <div class="num">01</div><div class="divider"></div>
+          <h3>Første punkt</h3><p>Kort forklaring i to–tre linjer. Her står der senere det, der skal siges højt.</p>
+        </div>
+        <div class="card">
+          <svg class="tick draw" viewBox="0 0 34 34"><path d="M2 12V2h10M22 2h10v10M32 22v10H22M12 32H2V22" class="thin"/></svg>
+          <div class="num">02</div><div class="divider"></div>
+          <h3>Andet punkt</h3><p>Kort forklaring i to–tre linjer. Her står der senere det, der skal siges højt.</p>
+        </div>
+        <div class="card">
+          <svg class="tick draw" viewBox="0 0 34 34"><path d="M2 12V2h10M22 2h10v10M32 22v10H22M12 32H2V22" class="thin"/></svg>
+          <div class="num">03</div><div class="divider"></div>
+          <h3>Tredje punkt</h3><p>Kort forklaring i to–tre linjer. Her står der senere det, der skal siges højt.</p>
+        </div>
+      </div>
+    </div>
+    <div class="pager">02 / 03</div>
+  </section>
+
+  <!-- 3 · ÉT STORT TAL -->
+  <section class="slide s3">
+    <div class="frame"><i></i><i></i><i></i><i></i></div>
+    <div class="content">
+      <div>
+        <div class="bignum">87<small>%</small></div>
+      </div>
+      <div class="right">
+        <div class="kicker alt">Nøgletal · Eksempel</div>
+        <h2>Aktive <span class="mark">brugere<svg viewBox="0 0 300 30" preserveAspectRatio="none"><path pathLength="1" d="M4 16 C60 24, 120 6, 190 16 S260 22, 296 12"/></svg></span><br>hver uge</h2>
+        <div class="divider"></div>
+        <div class="label">Tallet er pladsholder</div>
+        <div class="note">↑ op fra 74 % i september</div>
+      </div>
+    </div>
+    <div class="pager">03 / 03</div>
+  </section>
+
+</div>
+<script>
+(function(){
+  var stage=document.getElementById('stage'),slides=[].slice.call(document.querySelectorAll('.slide')),i=0;
+  function fit(){var s=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform='translate(-50%,-50%) scale('+s+')'}
+  function show(n){i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach(function(el,k){el.classList.toggle('active',k===i)});
+    try{history.replaceState(null,'','#'+(i+1))}catch(e){}}
+  addEventListener('resize',fit);fit();
+  addEventListener('keydown',function(e){
+    if(['ArrowRight','PageDown',' '].indexOf(e.key)>-1){e.preventDefault();show(i+1)}
+    if(['ArrowLeft','PageUp'].indexOf(e.key)>-1){e.preventDefault();show(i-1)}
+    if(e.key==='Home')show(0);if(e.key==='End')show(slides.length-1)});
+  addEventListener('click',function(e){show(e.clientX>innerWidth/2?i+1:i-1)});
+  var h=parseInt(location.hash.slice(1),10);if(h)show(h-1);
+})();
+</script>
+</body>
+</html>

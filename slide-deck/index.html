@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retningslinjer for AI i Colibo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Epilogue:wght@800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#2500FF;
+  --pink:#E8E6DE;
+  --chalk:#FDFBF5;
+  --chalk-dim:rgba(253,251,245,.62);
+  --yellow:#F2F1EB;
+  --mint:#8FE0B8;
+  --marker:#FF7A1A;
+  --grid-major:rgba(253,251,245,.10);
+  --grid-minor:rgba(253,251,245,.04);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#0a0040;overflow:hidden}
+body{position:relative;font-family:'JetBrains Mono',monospace;color:var(--chalk)}
+body.nocursor,body.nocursor *{cursor:none!important}
+
+/* ---------- lærred 1600 × 900 ---------- */
+#stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform:translate(-50%,-50%);transform-origin:center;overflow:hidden;background:var(--blue)}
+.slide{display:none;position:absolute;inset:0;overflow:hidden;
+  background:
+    linear-gradient(var(--grid-major) 1px,transparent 1px) 0 0/100px 100px,
+    linear-gradient(90deg,var(--grid-major) 1px,transparent 1px) 0 0/100px 100px,
+    linear-gradient(var(--grid-minor) 1px,transparent 1px) 0 0/20px 20px,
+    linear-gradient(90deg,var(--grid-minor) 1px,transparent 1px) 0 0/20px 20px,
+    var(--blue)}
+.slide.active{display:block;animation:fadein .45s ease both}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.slide::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,40,.55) 100%)}
+.s-divider::before{background:radial-gradient(ellipse at center,transparent 25%,rgba(0,0,40,.72) 100%)}
+
+.frame{position:absolute;inset:30px;border:1px solid var(--chalk-dim);pointer-events:none}
+.frame i{position:absolute;width:20px;height:20px;border:0 solid var(--chalk)}
+.frame i:nth-child(1){left:-10px;top:-10px;border-width:2px 0 0 2px}
+.frame i:nth-child(2){right:-10px;top:-10px;border-width:2px 2px 0 0}
+.frame i:nth-child(3){left:-10px;bottom:-10px;border-width:0 0 2px 2px}
+.frame i:nth-child(4){right:-10px;bottom:-10px;border-width:0 2px 2px 0}
+
+.content{position:absolute;inset:30px;padding:76px 96px;z-index:1}
+.kicker{font:700 19px/1 'JetBrains Mono';letter-spacing:.22em;text-transform:uppercase;color:var(--mint)}
+.kicker.alt{color:var(--yellow)}
+h1,h2{font-family:'Epilogue',sans-serif;font-weight:800;letter-spacing:-.025em;line-height:1.03;color:var(--chalk)}
+h1{font-size:124px}
+h2{font-size:88px}
+.sub{font-size:27px;line-height:1.55;color:var(--chalk-dim);max-width:1000px}
+.note{font-family:'Caveat',cursive;font-weight:500;font-size:40px;color:var(--chalk-dim);line-height:1.1}
+.divider{height:2px;background:var(--pink);opacity:.9}
+
+/* orange markering under ét ord */
+.mark{position:relative;display:inline-block;white-space:nowrap}
+.mark svg{position:absolute;left:-2%;bottom:-.16em;width:104%;height:.3em;overflow:visible}
+.mark path{fill:none;stroke:var(--marker);stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1}
+.slide.active .mark path{animation:draw .9s .55s cubic-bezier(.6,.1,.2,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+
+/* fragmenter: kommer frem ét klik ad gangen */
+.frag{opacity:0;translate:0 16px;transition:opacity .4s ease,translate .4s ease}
+.frag.in{opacity:1;translate:0 0}
+
+/* tegninger: hvid streg */
+.draw{fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.draw .thin{stroke-width:1;opacity:.6}
+.draw .dash{stroke-dasharray:6 8}
+.draw text{fill:var(--chalk);stroke:none;font-family:'JetBrains Mono',monospace;font-size:17px;letter-spacing:.04em}
+.draw text.cap{font-family:'Caveat',cursive;font-size:27px;fill:var(--yellow);letter-spacing:0}
+.draw text.hd{font-weight:700;font-size:18px;letter-spacing:.08em}
+.draw text.dm{fill:var(--chalk-dim);font-size:15px}
+
+/* titel */
+.s-title .content{display:flex;flex-direction:column;justify-content:space-between}
+.s-title h1{margin-top:38px;font-size:104px;max-width:880px}
+.s-title .tsub{margin-top:30px;font-size:26px;color:var(--chalk-dim);letter-spacing:.04em}
+.s-title .foot{display:flex;align-items:flex-end;gap:30px}
+.s-title .foot .divider{flex:0 0 130px;margin-bottom:10px}
+.s-title .foot span{color:var(--chalk-dim);font-size:19px;letter-spacing:.12em}
+.s-title .art{position:absolute;right:80px;top:120px;width:520px;height:570px}
+
+/* divider */
+.s-divider .content{display:flex;flex-direction:column;justify-content:center;gap:30px}
+.s-divider .part{display:flex;align-items:baseline;gap:34px}
+.s-divider .num{font:700 190px/0.9 'JetBrains Mono';color:var(--mint);letter-spacing:-.04em}
+.s-divider .kicker{color:var(--yellow)}
+.s-divider h1{font-size:104px}
+.s-divider .rule{height:2px;background:var(--pink);margin-top:10px;width:100%}
+.s-divider .tag{font-size:23px;color:var(--chalk-dim);letter-spacing:.06em}
+
+/* stor overskrift */
+.s-big .content{display:flex;flex-direction:column;justify-content:center;gap:34px}
+.s-big h1{font-size:132px}
+.s-big .sub{max-width:1060px}
+
+/* overskrift + diagram */
+.s-diagram .content{display:flex;flex-direction:column;gap:22px}
+.s-diagram h2{margin:6px 0 4px}
+.s-diagram .sub{max-width:1100px;font-size:25px}
+.s-diagram svg.fig{width:100%;flex:1;min-height:0;margin-top:6px}
+
+/* kort */
+.s-cards .content{display:flex;flex-direction:column}
+.s-cards h2{margin:28px 0 56px}
+.cards{display:grid;grid-template-columns:repeat(var(--n,3),1fr);gap:34px}
+.card{position:relative;padding:40px 36px 42px;border:1px solid var(--chalk-dim);background:rgba(0,0,60,.28);min-height:330px}
+.card .num{font:700 56px/1 'JetBrains Mono';color:var(--mint)}
+.card:nth-child(2) .num{color:var(--yellow)}
+.card:nth-child(3) .num{color:var(--mint)}
+.card .rule{position:absolute;left:36px;right:36px;top:116px;height:1px;background:var(--pink);opacity:.5}
+.card h3{font:800 36px/1.1 'Epilogue';margin:34px 0 16px;letter-spacing:-.01em}
+.card p{font-size:21px;line-height:1.5;color:var(--chalk-dim)}
+.card .tag{display:inline-block;margin-bottom:18px;font:700 16px 'JetBrains Mono';letter-spacing:.16em;text-transform:uppercase;color:var(--mint)}
+.card .tag.warn{color:var(--yellow)}
+.card .tick{position:absolute;right:18px;top:18px;width:30px;height:30px}
+.s-cards.two .card{min-height:360px}
+.s-cards.two .card h3{font-size:44px}
+.s-cards.two .card p{font-size:24px}
+
+/* håndskrevet bibemærkning */
+.sidenote{align-self:flex-start;rotate:-2deg;font-family:'Caveat',cursive;font-size:50px;color:var(--yellow);line-height:1.1;max-width:900px}
+.sidenote.frag{translate:0 16px}
+.sidenote.frag.in{translate:0 0}
+
+/* styring */
+#bar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:flex;align-items:center;gap:18px;
+  padding:8px 16px;background:rgba(0,0,40,.78);border:1px solid var(--chalk-dim);color:var(--chalk);
+  font:400 16px 'JetBrains Mono';letter-spacing:.18em;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+#bar.show{opacity:1;pointer-events:auto}
+#bar button{background:none;border:1px solid var(--chalk-dim);color:var(--chalk);width:40px;height:34px;font:700 18px 'JetBrains Mono';cursor:pointer}
+#bar button:hover{background:rgba(253,251,245,.16)}
+#overview{position:fixed;inset:0;background:rgba(5,0,50,.96);z-index:60;overflow:auto;padding:36px;display:none}
+#overview.open{display:block}
+#overview h2{font:700 16px 'JetBrains Mono';letter-spacing:.2em;color:var(--mint);margin-bottom:24px;text-transform:uppercase}
+.ogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+.oitem{background:none;border:1px solid var(--chalk-dim);color:var(--chalk);text-align:left;font:400 14px 'JetBrains Mono';cursor:pointer;padding:8px}
+.oitem:hover,.oitem:focus-visible{border-color:var(--mint);outline:none}
+.oitem.cur{border-color:var(--marker)}
+.oitem .tw{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;margin-bottom:8px}
+.oitem .tn{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0;pointer-events:none}
+.oitem span{display:block;letter-spacing:.06em}
+
+/* miniaturer */
+.thumb .slide{animation:none!important}
+.thumb .frag{opacity:1!important;translate:0 0!important}
+.thumb .mark path{animation:none!important;stroke-dashoffset:0!important}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .mark path{stroke-dashoffset:0!important}
+}
+</style>
+</head>
+<body>
+
+<div id="stage">
+
+<!-- 1 · TITEL -->
+<section class="slide s-title" data-title="Retningslinjer for AI i Colibo"
+  data-notes="Velkommen. Det her er en kort intro til vores AI-projekt og til nogle få retningslinjer. Vi bruger ca. 15 minutter, og der er plads til spørgsmål til sidst. Ferdinand og Mogens supplerer undervejs.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <svg class="art draw" viewBox="0 0 640 700" aria-hidden="true">
+    <circle class="thin" cx="320" cy="350" r="290" stroke-dasharray="4 10"/>
+    <circle class="thin" cx="320" cy="350" r="190" stroke-dasharray="2 8"/>
+    <path class="thin" d="M30 350H610M320 60V640"/>
+    <circle cx="320" cy="350" r="46"/><circle cx="320" cy="350" r="14"/>
+    <path d="M320 304V164M366 350H500M320 396V540M274 350H140"/>
+    <circle cx="320" cy="140" r="26"/><circle cx="524" cy="350" r="26"/>
+    <circle cx="320" cy="564" r="26"/><circle cx="116" cy="350" r="26"/>
+    <path d="M338 158L506 332M502 368L338 546M302 546L134 368M134 332L302 158" class="thin dash"/>
+    <path d="M300 140h40M320 120v40M504 350h40M524 330v40M300 564h40M320 544v40M96 350h40M116 330v40" class="thin"/>
+  </svg>
+  <div class="content">
+    <div>
+      <div class="kicker">Colibo · Månedsmøde · Oktober 2026</div>
+      <h1>Retningslinjer for <span class="mark">AI</span> i Colibo</h1>
+      <div class="tsub">Kort intro til AI-projektet</div>
+    </div>
+    <div class="foot"><div class="divider"></div><span>CA. 15 MIN</span></div>
+  </div>
+</section>
+
+<!-- 2 · DIVIDER 1 -->
+<section class="slide s-divider" data-title="Del 1: Hvorfor"
+  data-notes="Første del: hvorfor vi gør det her. Det tager et par minutter.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="part"><div class="num">01</div><div class="kicker">Del 1</div></div>
+    <h1><span class="mark">Hvorfor</span> det her</h1>
+    <div class="rule"></div>
+    <div class="tag">Én samlet knowledge base</div>
+  </div>
+</section>
+
+<!-- 3 · STOR OVERSKRIFT -->
+<section class="slide s-big" data-title="Ét sted at lede"
+  data-notes="Vi har lavet et nyt websted på SharePoint, der hedder Colibo. Det er vores knowledge base, og det skal være one single source of truth. Grunden er, at vi nu bruger Claude til at lave nye tilbud ud fra den viden, der ligger i knowledge basen, og ud fra HubSpot. Ferdinand bruger allerede knowledge basen på samme måde som Tender Writer. Så skal viden være entydig og ligge ét sted.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="kicker">Knowledge base</div>
+    <h1>Ét sted at <span class="mark">lede</span></h1>
+    <div class="sub">Colibo er vores single source of truth. Claude laver nu tilbud ud fra videnbasen og HubSpot, og Ferdinand bruger den allerede.</div>
+  </div>
+</section>
+
+<!-- 4 · KORT -->
+<section class="slide s-cards" data-title="Hvad vi får ud af det"
+  data-notes="Tre ting vi får ud af det. Ingen dubletter: informationen står ét sted. Ingen tvetydighed: ét klart svar. Og en rigtig god bivirkning: Teamwebsted bliver også ryddet op. Til sidst en note: ikke alt flytter. Fx dokumentation i koden bliver, hvor den er. Fire klik: tre kort og noten.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="kicker">Gevinsten</div>
+    <h2>Hvad vi <span class="mark">får</span> ud af det</h2>
+    <div class="cards" style="--n:3">
+      <div class="card frag"><div class="num">01</div><div class="rule"></div><h3>Ingen dubletter</h3><p>Informationen står ét sted, så ingen skal gætte på, hvilken version der gælder.</p></div>
+      <div class="card frag"><div class="num">02</div><div class="rule"></div><h3>Ingen tvetydighed</h3><p>Ét klart svar i stedet for flere, der peger i hver sin retning.</p></div>
+      <div class="card frag"><div class="num">03</div><div class="rule"></div><h3>Ryddet Teamwebsted</h3><p>En rigtig god bivirkning: Teamwebsted bliver også ryddet op.</p></div>
+    </div>
+    <div class="sidenote frag" style="margin-top:44px;font-size:44px">Ikke alt flytter – dokumentation i koden bliver, hvor den er.</div>
+  </div>
+</section>
+
+<!-- 5 · DIVIDER 2 -->
+<section class="slide s-divider" data-title="Del 2: Sådan gør vi"
+  data-notes="Anden del: hvad det betyder i hverdagen.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="part"><div class="num">02</div><div class="kicker">Del 2</div></div>
+    <h1>Sådan <span class="mark">gør</span> vi</h1>
+    <div class="rule"></div>
+    <div class="tag">Fra princip til hverdag</div>
+  </div>
+</section>
+
+<!-- 6 · BILLEDE: tegnet flow -->
+<section class="slide s-diagram" data-title="Claude desktop og Colibo"
+  data-notes="Vi bruger primært Claude desktop-appen. Har du den ikke, så installér den. Dokumenterne ligger på Colibo-webstedet og synkroniseres, så Claude og vi andre arbejder ud fra de samme dokumenter.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="kicker">Arbejdsgang</div>
+    <h2><span class="mark">Claude</span> desktop og Colibo</h2>
+    <div class="sub">Installér Claude desktop, hvis du ikke har den. Dokumenterne ligger på Colibo og synkroniseres.</div>
+    <svg class="fig draw" viewBox="0 0 1000 300" preserveAspectRatio="xMidYMid meet" aria-label="Flow: dokumenter til Colibo-webstedet, som synkroniserer med Claude desktop">
+      <path d="M40 90H100L120 110V200H40Z M100 90V110H120"/>
+      <path class="thin" d="M56 138H104M56 158H104M56 178H90"/>
+      <text x="80" y="236" text-anchor="middle">Dokumenter</text>
+      <path d="M140 150H300"/><path d="M290 143l10 7-10 7"/>
+      <rect x="320" y="85" width="280" height="130"/>
+      <path class="thin" d="M310 85h-10M320 75v-10M610 85h10M600 75v-10M310 215h-10M320 225v10M610 215h10M600 225v10"/>
+      <text class="hd" x="460" y="143" text-anchor="middle">COLIBO-WEBSTEDET</text>
+      <text class="dm" x="460" y="173" text-anchor="middle">SharePoint</text>
+      <path d="M620 150H760"/><path d="M630 143l-10 7 10 7"/><path d="M750 143l10 7-10 7"/>
+      <text class="cap" x="690" y="123" text-anchor="middle">synk</text>
+      <rect x="780" y="85" width="190" height="130"/>
+      <text class="hd" x="875" y="143" text-anchor="middle">CLAUDE</text>
+      <text x="875" y="173" text-anchor="middle">desktop</text>
+    </svg>
+  </div>
+</section>
+
+<!-- 7 · KORT -->
+<section class="slide s-cards" data-title="Hvem ejer hvad"
+  data-notes="Ikke alle skal flytte filer. Jeg er overordnet ansvarlig til at starte med. Så er der mappeejere, fx Mogens og Ferdinand, som er ansvarlige for en mappe eller et dokument på Colibo og begynder at flytte filer fra Teamwebsted. Resten af jer bliver involveret løbende, og hvis I har noget relevant, så sig det til mig eller Ferdinand. Tre klik, ét kort ad gangen.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="kicker">Ansvar</div>
+    <h2>Hvem <span class="mark">ejer</span> hvad</h2>
+    <div class="cards" style="--n:3">
+      <div class="card frag"><div class="num">01</div><div class="rule"></div><h3>Morten</h3><p>Overordnet ansvarlig fra start.</p></div>
+      <div class="card frag"><div class="num">02</div><div class="rule"></div><h3>Mappeejere</h3><p>Fx Mogens og Ferdinand. Ejere af en mappe eller et dokument flytter filer fra Teamwebsted til Colibo.</p></div>
+      <div class="card frag"><div class="num">03</div><div class="rule"></div><h3>Resten af os</h3><p>Du bliver involveret, når det er din tur. Har du noget relevant, så sig det til Morten eller Ferdinand.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 · DIVIDER 3 -->
+<section class="slide s-divider" data-title="Del 3: Spilleregler"
+  data-notes="Sidste del: tre regler og hvad der sker bagefter.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="part"><div class="num">03</div><div class="kicker">Del 3</div></div>
+    <h1><span class="mark">Spilleregler</span></h1>
+    <div class="rule"></div>
+    <div class="tag">Det korte, I skal huske</div>
+  </div>
+</section>
+
+<!-- 9 · KORT -->
+<section class="slide s-cards" data-title="Tre regler"
+  data-notes="Tre regler. Én: de samme regler, der altid gælder i Colibo, gælder også med AI. To: giv ikke kunders kundedata til Claude. Tre, og den vil jeg gerne understrege: du læser altid selv faktuel korrektur på det, Claude leverer. Tre klik, ét kort ad gangen.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="kicker">Spilleregler</div>
+    <h2>Tre <span class="mark">regler</span></h2>
+    <div class="cards" style="--n:3">
+      <div class="card frag"><div class="num">01</div><div class="rule"></div><h3>Samme regler som altid</h3><p>Colibos almindelige regler gælder også, når du bruger AI.</p></div>
+      <div class="card frag"><div class="num">02</div><div class="rule"></div><h3>Ingen kundedata</h3><p>Giv ikke kunders kundedata til Claude.</p></div>
+      <div class="card frag"><div class="num">03</div><div class="rule"></div><h3>Læs selv korrektur</h3><p>Tjek altid fakta i det, Claude leverer. Du står inde for resultatet.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · DET NÆSTE + SPØRGSMÅL -->
+<section class="slide s-big" data-title="Det næste, og spørgsmål"
+  data-notes="Arbejdet fortsætter med de næste projekter. Det er ikke helt fastlagt, men det kan fx være design og kommunikation. Hvis I har spørgsmål nu eller senere, så tag fat i mig eller Ferdinand. Tak.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="kicker">Det næste</div>
+    <h1 style="font-size:100px">Fx <span class="mark">design</span> og kommunikation</h1>
+    <div class="sub">Spørgsmål? Tag fat i Morten eller Ferdinand.</div>
+  </div>
+</section>
+
+</div>
+
+<div id="bar" aria-label="Styring">
+  <button id="prev" aria-label="Forrige">◀</button>
+  <span id="pos">1 / 1</span>
+  <button id="next" aria-label="Næste">▶</button>
+</div>
+<div id="overview" role="dialog" aria-label="Oversigt"><h2>Oversigt · tryk M eller Esc for at lukke</h2><div class="ogrid" id="ogrid"></div></div>
+
+<script>
+(function(){
+  var stage=document.getElementById('stage');
+  var slides=[].slice.call(stage.querySelectorAll('.slide'));
+  var bar=document.getElementById('bar'),pos=document.getElementById('pos');
+  var overview=document.getElementById('overview'),ogrid=document.getElementById('ogrid');
+  var cur=0,f=0,pw=null,pwStart=0,pwTimer=null;
+
+  /* orange markering: tre håndtegnede varianter */
+  var paths=['M4 18 C60 6,120 24,180 12 S270 14,296 16','M4 16 C70 24,130 8,200 16 S268 20,296 10','M4 20 C56 10,124 24,190 14 S272 10,296 18'];
+  [].forEach.call(stage.querySelectorAll('.mark'),function(m,i){
+    var s=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    s.setAttribute('viewBox','0 0 300 30');s.setAttribute('preserveAspectRatio','none');s.setAttribute('aria-hidden','true');
+    var p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('pathLength','1');p.setAttribute('d',paths[i%3]);s.appendChild(p);m.appendChild(s);
+  });
+
+  function fit(){var s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform='translate(-50%,-50%) scale('+s+')'}
+  function frags(i){return slides[i].querySelectorAll('.frag')}
+  function paintFrags(){[].forEach.call(frags(cur),function(el,k){el.classList.toggle('in',k<f)})}
+
+  function go(n,showAll){
+    n=Math.max(0,Math.min(slides.length-1,n));
+    if(n!==cur||!slides[cur].classList.contains('active')){
+      slides.forEach(function(s){s.classList.remove('active')});
+      cur=n;
+      void slides[cur].offsetWidth;
+      slides[cur].classList.add('active');
+    }
+    f=showAll?frags(cur).length:0;
+    paintFrags();update();
+  }
+  function next(){if(f<frags(cur).length){f++;paintFrags();update()}else if(cur<slides.length-1){go(cur+1,false)}}
+  function prev(){if(f>0){f--;paintFrags();update()}else if(cur>0){go(cur-1,true)}}
+
+  function update(){
+    pos.textContent=(cur+1)+' / '+slides.length;
+    document.title=slides[cur].dataset.title+' · Colibo';
+    try{history.replaceState(null,'','#s'+(cur+1))}catch(e){}
+    presenterUpdate();
+  }
+
+  /* ---------- oversigt ---------- */
+  function buildOverview(){
+    ogrid.innerHTML='';
+    slides.forEach(function(sl,i){
+      var b=document.createElement('button');b.className='oitem'+(i===cur?' cur':'');
+      var tw=document.createElement('div');tw.className='tw thumb';
+      var tn=document.createElement('div');tn.className='tn';
+      var c=sl.cloneNode(true);c.classList.add('active');tn.appendChild(c);tw.appendChild(tn);
+      var cap=document.createElement('span');cap.textContent=(i+1)+' · '+sl.dataset.title;
+      b.appendChild(tw);b.appendChild(cap);
+      b.addEventListener('click',function(){closeOverview();go(i,false)});
+      ogrid.appendChild(b);
+    });
+    var w=ogrid.firstChild.querySelector('.tw').clientWidth||300;
+    [].forEach.call(ogrid.querySelectorAll('.tn'),function(t){t.style.transform='scale('+(w/1600)+')'});
+  }
+  function openOverview(){overview.classList.add('open');buildOverview();var c=ogrid.querySelector('.cur');if(c){c.focus();c.scrollIntoView({block:'center'})}}
+  function closeOverview(){overview.classList.remove('open')}
+  function toggleOverview(){overview.classList.contains('open')?closeOverview():openOverview()}
+
+  /* ---------- presenter-vindue ---------- */
+  function openPresenter(){
+    if(pw&&!pw.closed){pw.focus();return}
+    pw=window.open('','colibo-presenter','width=1000,height=640');
+    if(!pw){return}
+    var d=pw.document;
+    d.open();
+    d.write('<!doctype html><html lang="da"><head><meta charset="utf-8"><title>Presenter</title></head><body></body></html>');
+    d.close();
+    [].forEach.call(document.head.querySelectorAll('link[rel=stylesheet],link[rel=preconnect],style'),function(n){d.head.appendChild(d.importNode(n,true))});
+    var st=d.createElement('style');
+    st.textContent='html,body{height:100%;overflow:auto;background:#0a0040}body{padding:22px;display:grid;grid-template-columns:1fr 360px;gap:26px;align-items:start}'+
+      '#pn{font:400 15px "JetBrains Mono";letter-spacing:.14em;color:#8FE0B8;text-transform:uppercase}'+
+      '#pt{font:800 34px/1.1 Epilogue,sans-serif;margin:10px 0 22px;color:#FDFBF5}'+
+      '#nt{font:400 24px/1.55 "JetBrains Mono",monospace;color:#FDFBF5;white-space:pre-wrap}'+
+      '#nx{font:400 14px "JetBrains Mono";letter-spacing:.14em;color:rgba(253,251,245,.62);text-transform:uppercase;margin-bottom:8px}'+
+      '#tw{position:relative;width:360px;height:202.5px;overflow:hidden;border:1px solid rgba(253,251,245,.62)}'+
+      '#tn{position:absolute;left:0;top:0;width:1600px;height:900px;transform:scale(.225);transform-origin:0 0}'+
+      '#nxt{font:700 16px "JetBrains Mono";margin-top:10px;color:#FDFBF5}'+
+      '#tm{font:700 44px "JetBrains Mono";margin-top:30px;color:#F2F1EB;letter-spacing:.06em}'+
+      '#hint{font:400 13px/1.6 "JetBrains Mono";color:rgba(253,251,245,.62);margin-top:22px}'+
+      '.thumb .slide{animation:none!important}.thumb .frag{opacity:1!important;translate:0 0!important}.thumb .mark path{animation:none!important;stroke-dashoffset:0!important}';
+    d.head.appendChild(st);
+    d.body.innerHTML='<div><div id="pn"></div><div id="pt"></div><div id="nt"></div></div>'+
+      '<div><div id="nx">Næste slide</div><div id="tw" class="thumb"><div id="tn"></div></div><div id="nxt"></div>'+
+      '<div id="tm">00:00</div><div id="hint">Pile / mellemrum / Page Down–Up styrer decket herfra.</div></div>';
+    pw.addEventListener('keydown',handleKey);
+    pwStart=Date.now();
+    clearInterval(pwTimer);
+    pwTimer=setInterval(function(){
+      if(!pw||pw.closed){clearInterval(pwTimer);return}
+      var s=Math.floor((Date.now()-pwStart)/1000),m=Math.floor(s/60),el=pw.document.getElementById('tm');
+      if(el)el.textContent=('0'+m).slice(-2)+':'+('0'+(s%60)).slice(-2);
+    },1000);
+    presenterUpdate();
+  }
+  function presenterUpdate(){
+    if(!pw||pw.closed)return;
+    var d=pw.document,sl=slides[cur];
+    var $=function(id){return d.getElementById(id)};
+    if(!$('pn'))return;
+    var nf=frags(cur).length;
+    $('pn').textContent='Slide '+(cur+1)+' / '+slides.length+(nf?' · klik '+f+' / '+nf:'');
+    $('pt').textContent=sl.dataset.title;
+    $('nt').textContent=sl.dataset.notes||'';
+    var tn=$('tn');tn.innerHTML='';
+    if(cur<slides.length-1){
+      var c=slides[cur+1].cloneNode(true);c.classList.add('active');tn.appendChild(d.importNode(c,true));
+      $('nxt').textContent=slides[cur+1].dataset.title;
+    }else{$('nxt').textContent='Slut på decket'}
+  }
+
+  /* ---------- tastatur ---------- */
+  function handleKey(e){
+    if(e.ctrlKey||e.metaKey||e.altKey)return;
+    var k=e.key;
+    if(overview.classList.contains('open')){
+      if(k==='Escape'||k==='m'||k==='M'){e.preventDefault();closeOverview()}
+      return;
+    }
+    if(k==='ArrowRight'||k===' '||k==='PageDown'){e.preventDefault();next()}
+    else if(k==='ArrowLeft'||k==='PageUp'){e.preventDefault();prev()}
+    else if(k==='f'||k==='F'){e.preventDefault();
+      if(document.fullscreenElement){document.exitFullscreen()}else if(document.documentElement.requestFullscreen){document.documentElement.requestFullscreen()}}
+    else if(k==='m'||k==='M'){e.preventDefault();toggleOverview()}
+    else if(k==='p'||k==='P'){e.preventDefault();openPresenter()}
+  }
+  addEventListener('keydown',handleKey);
+
+  /* ---------- mus: styring nederst, skjult markør ---------- */
+  var hideT=null;
+  function mouse(e){
+    document.body.classList.remove('nocursor');
+    bar.classList.toggle('show',e.clientY>innerHeight-90);
+    clearTimeout(hideT);
+    hideT=setTimeout(function(){document.body.classList.add('nocursor');bar.classList.remove('show')},2000);
+  }
+  addEventListener('mousemove',mouse);
+  document.documentElement.addEventListener('mouseleave',function(){bar.classList.remove('show')});
+  document.getElementById('prev').addEventListener('click',prev);
+  document.getElementById('next').addEventListener('click',next);
+  hideT=setTimeout(function(){document.body.classList.add('nocursor')},2000);
+
+  /* ---------- adresse: #s5 ---------- */
+  function fromHash(){var m=/^#s(\d+)$/.exec(location.hash);return m?parseInt(m[1],10)-1:null}
+  addEventListener('hashchange',function(){var n=fromHash();if(n!==null&&n!==cur)go(n,false)});
+
+  addEventListener('resize',fit);
+  fit();
+  var h=fromHash();go(h===null?0:h,false);
+})();
+</script>
+</body>
+</html>
