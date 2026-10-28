@@ -271,7 +271,7 @@ h2{font-size:80px;color:var(--ink)}
 
 <!-- 1 · TITEL -->
 <section class="slide s-title" data-title="Knowledge Base til AI i Colibo"
-  data-notes="Velkommen. Det her er planen for vores fælles vidensbank, og hvordan Claude kommer til at bruge den. Kort sagt: én vidensbank for hele Colibo, så vi spørger hinanden mindre. Vi bruger ca. 15 minutter, og der er plads til spørgsmål til sidst. Ferdinand og Mogens supplerer undervejs.">
+  data-notes="Velkommen. Det her er planen for vores fælles vidensbank, og hvordan Claude kommer til at bruge den. Kort sagt: én vidensbank i SharePoint for hele Colibo. Vi bruger ca. 15 minutter, og der er plads til spørgsmål til sidst. Ferdinand og Mogens supplerer undervejs.">
   <div class="frame"><i></i><i></i><i></i><i></i></div>
   <svg class="art draw" viewBox="0 0 640 700" aria-hidden="true">
     <circle class="thin" cx="320" cy="350" r="290" stroke-dasharray="4 10"/>
@@ -288,7 +288,7 @@ h2{font-size:80px;color:var(--ink)}
     <div>
       <div class="kicker">Colibo · Månedsmøde · Oktober 2026</div>
       <h1>Knowledge Base til <span class="mark">AI</span> i Colibo</h1>
-      <div class="tsub">Én vidensbank for hele Colibo. <b>Så vi spørger hinanden mindre.</b></div>
+      <div class="tsub">Én vidensbank i SharePoint for hele Colibo.</div>
       <div class="pills"><span>Viden samlet ét sted</span><span>Klart ejerskab</span><span>Skills, der bruger viden</span></div>
     </div>
 
@@ -355,7 +355,7 @@ h2{font-size:80px;color:var(--ink)}
 
 <!-- 6 · STRUKTUR -->
 <section class="slide s-m" data-title="Struktur"
-  data-notes="Hver fil bor ét sted, og mappen fortæller, hvad den handler om. Mapper efter emne: DBA'en er et kontraktvilkår, så den bor under Legal and Compliance, selvom salg bruger den mest. Henvisninger i stedet for kopier: andre områder peger på filen, så der kun findes én version. Og kun gældende versioner: en ny version erstatter den gamle under samme navn. Relevante dokumenter flyttes fra Teamwebsted, så Teamwebsted også bliver ryddet op. Men ikke alt flytter: dokumentation i koden bliver, hvor den er.">
+  data-notes="Hver fil bor ét sted, og mappen fortæller, hvad den handler om. Vi sorterer efter emne. DBA'en er et kontraktvilkår, så den bor under Legal and Compliance, selvom det mest er salg, der bruger den. Har andre brug for filen, peger de på den i stedet for at lave en kopi. Så findes der kun én version. Og der ligger kun gældende versioner: kommer der en ny, erstatter den den gamle under samme navn. Vi flytter de relevante dokumenter fra Teamwebsted, og så bliver Teamwebsted ryddet op på samme tid. Men ikke alt flytter. Dokumentation i koden bliver, hvor den er.">
   <div class="frame"><i></i><i></i><i></i><i></i></div>
   <div class="content">
     <div class="kicker">Struktur</div>
@@ -383,7 +383,7 @@ h2{font-size:80px;color:var(--ink)}
 
 <!-- 7 · EJERSKAB -->
 <section class="slide s-cards s-m" data-title="Ejerskab"
-  data-notes="Klart ejerskab: mappen har én ejer, og filen har én ejer. Jeg er overordnet ansvarlig fra start. Områdeejeren, fx Mogens eller Ferdinand, har ansvaret for mappen: strukturen, at intet vigtigt mangler, og indeksfilen, som Claude læser først. Dokumentejeren har ansvaret for filen: at indholdet er korrekt, og en gennemgang hvert kvartal. Som standard er det områdeejeren. Og visningen Mine dokumenter giver dig alt, du ejer, på én liste. Hver fil har fire kolonner: ejer, senest gennemgået, næste gennemgang og klassifikation. Resten af jer bliver involveret løbende.">
+  data-notes="Klart ejerskab: mappen har én ejer, og filen har én ejer. Jeg er overordnet ansvarlig fra start. Områdeejeren, fx Mogens eller Ferdinand, har ansvaret for mappen: strukturen, at intet vigtigt mangler, og indeksfilen, som Claude læser først. Dokumentejeren har ansvaret for filen: at indholdet er korrekt, og at den bliver gennemgået hvert kvartal. Er der ikke sat en anden på, er det områdeejeren. Og i visningen Mine dokumenter kan du se alt, du ejer, på én liste. Hver fil har fire kolonner: ejer, senest gennemgået, næste gennemgang og klassifikation. Resten af jer bliver involveret løbende.">
   <div class="frame"><i></i><i></i><i></i><i></i></div>
   <div class="content">
     <div class="kicker">Ejerskab</div>
@@ -402,11 +402,11 @@ h2{font-size:80px;color:var(--ink)}
 
 <!-- 8 · MINE DOKUMENTER -->
 <section class="slide s-m" data-title="Mine dokumenter"
-  data-notes="Sådan ser det ud i praksis. Visningen Mine dokumenter viser alt, du ejer, på tværs af alle mapper. Datoerne her er fiktive. Fire trin: åbn visningen, tjek filerne øverst på listen, ret det, der er forældet, og sæt Senest gennemgået til i dag. Næste gennemgang beregnes selv: senest gennemgået plus 90 dage. Er datoen overskredet, får du en mail.">
+  data-notes="Her er visningen Mine dokumenter, med et par fiktive datoer. Den viser alt, du ejer, på tværs af alle mapper. Du åbner den, kigger på filerne øverst, retter det, der er forældet, og sætter Senest gennemgået til i dag. Datoen for næste gennemgang regner SharePoint selv ud: senest gennemgået plus 90 dage. Når den er overskredet, får du en mail.">
   <div class="frame"><i></i><i></i><i></i><i></i></div>
   <div class="content">
     <div class="kicker">Mine dokumenter</div>
-    <h2>Ét <span class="mark">overblik</span> over alt, du ejer.<span class="l2">På tværs af alle mapper.</span></h2>
+    <h2>Ét <span class="mark">overblik</span> over alt du ejer.<span class="l2">På tværs af alle mapper.</span></h2>
     <div class="card tbl">
       <div class="tbh"><span><b>Visning: Mine dokumenter</b> · Filter: Ejer er mig</span><span>Eksempel med fiktive datoer</span></div>
       <table>
@@ -423,7 +423,7 @@ h2{font-size:80px;color:var(--ink)}
 
 <!-- 9 · INDEKSFILEN -->
 <section class="slide s-m" data-title="Indeksfilen"
-  data-notes="Hver mappe har en indeksfil. Den er mappens indholdsfortegnelse, og Claude læser den først. Her er et eksempel fra Legal and Compliance. Den opdateres, når en fil tilføjes, omdøbes eller slettes, og ved kvartalsgennemgangen. Du skriver den ikke selv: åbn Claude med vidensbanken, skriv 'Opdatér indeksfilen i min mappe', tjek Claudes forslag og godkend. Indekset beskriver indholdet. Ejer og datoer står i SharePoint-kolonnerne.">
+  data-notes="Hver mappe har en indeksfil. Den er mappens indholdsfortegnelse, og Claude læser den først. Her er et eksempel fra Legal and Compliance. Den skal opdateres, når du tilføjer, omdøber eller sletter en fil, og ved kvartalsgennemgangen. Du skriver den ikke selv: åbn Claude med vidensbanken, skriv 'Opdatér indeksfilen i min mappe', tjek Claudes forslag og godkend. Indekset beskriver indholdet. Ejer og datoer står i SharePoint-kolonnerne.">
   <div class="frame"><i></i><i></i><i></i><i></i></div>
   <div class="content">
     <div class="kicker">Indeksfilen</div>
@@ -497,7 +497,7 @@ sikkerhedsdokumentation.
 
 <!-- 13 · NÆSTE SKRIDT -->
 <section class="slide s-cards s-m" data-title="Næste skridt"
-  data-notes="Vi går i gang nu, alle sammen. Indsatsen afhænger af, hvad du ejer. Alle gør det én gang: synkronisér vidensbanken, vælg Behold altid på denne enhed, og brug Claude desktop-appen. Har du den ikke, så installér den. Områdeejere rydder op i deres mappe, så kun gældende filer ligger der, sætter en ejer på hver fil og opretter indeksfilen med Claude. Dokumentejere gennemgår Mine dokumenter og sætter Senest gennemgået til i dag. Ejer du meget, så start med det, der bruges mest. Rammen sættes op centralt: kolonner, visningen, påmindelser og skills. Målet er, at første runde er færdig tirsdag 3. november.">
+  data-notes="Vi går i gang nu, alle sammen. Indsatsen afhænger af, hvad du ejer. Alle gør det én gang: synkronisér vidensbanken, vælg Behold altid på denne enhed, og brug Claude desktop-appen. Har du den ikke, så installér den. Områdeejere rydder op i deres mappe, så kun gældende filer ligger der, sætter en ejer på hver fil og opretter indeksfilen med Claude. Dokumentejere gennemgår Mine dokumenter og sætter Senest gennemgået til i dag. Ejer du meget, så start med det, der bruges mest. Kolonnerne, visningen, påmindelserne og skills sætter vi op centralt. Målet er, at første runde er færdig tirsdag 3. november.">
   <div class="frame"><i></i><i></i><i></i><i></i></div>
   <div class="content">
     <div class="kicker">Næste skridt</div>
@@ -516,7 +516,7 @@ sikkerhedsdokumentation.
 
 <!-- 14 · DET NÆSTE + SPØRGSMÅL -->
 <section class="slide s-big" data-title="Det næste, og spørgsmål"
-  data-notes="Når vidensbanken kører, fortsætter arbejdet med de næste projekter. Det er ikke helt fastlagt, men det kan fx være design og kommunikation. Hvis I har spørgsmål nu eller senere, så tag fat i mig eller Ferdinand. Tak.">
+  data-notes="Når vidensbanken kører, fortsætter arbejdet med de næste projekter. Det ligger ikke helt fast endnu, men det kan fx være design og kommunikation. Hvis I har spørgsmål nu eller senere, så tag fat i mig eller Ferdinand. Tak.">
   <div class="frame"><i></i><i></i><i></i><i></i></div>
   <div class="content">
     <div class="kicker">Det næste</div>
