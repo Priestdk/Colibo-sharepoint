@@ -242,6 +242,17 @@ h2{font-size:80px;color:var(--ink)}
 .ans .src{margin-top:10px;font-size:17px;color:var(--body)}
 .s-m .sidenote{max-width:none}
 .thumb .s-m .frag{opacity:1!important}
+.checks li.inv::before{background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 12.5l3.2 3.2L17 9' fill='none' stroke='%232500FF' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat;box-shadow:inset 0 0 0 1.5px var(--blue)}
+.golink{display:inline-block;margin-top:30px;padding:12px 22px;background:var(--blue);color:#fff;font:600 20px Inter;text-decoration:none}
+.kb .kbstats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.kb .kbstats div{background:var(--offwhite);padding:14px 14px 12px}
+.kb .kbstats b{display:block;font:700 44px/1 Outfit;color:var(--ink)}
+.kb .kbstats b.hi{color:var(--blue)}
+.kb .kbstats span{display:block;margin-top:6px;font:500 15px/1.3 Inter;color:var(--body)}
+.kb .kbchips{display:flex;flex-wrap:wrap;gap:8px}
+.kb .kbchips span{padding:6px 12px;border:1px solid var(--line);background:var(--offwhite);border-radius:999px;font:500 15px Inter;color:var(--ink)}
+.kb .kbchips span.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.kb .kbnote{margin-top:18px;font-size:17px;color:var(--body)}
 </style>
 </head>
 <body>
@@ -390,13 +401,44 @@ h2{font-size:80px;color:var(--ink)}
     <h2>Klart <span class="mark">ejerskab</span>.<span class="l2">Mappen har én ejer. Filen har én ejer.</span></h2>
     <div class="cards" style="--n:3">
       <div class="card frag"><div class="tag">Fx Mogens, Ferdinand</div><h3>Områdeejer</h3><div class="cs">Ansvar for mappen</div>
-        <ul class="checks"><li>Strukturen i mappen</li><li>At intet vigtigt mangler</li><li>Indeksfilen, som Claude læser først</li></ul></div>
+        <ul class="checks"><li>Strukturen i mappen</li><li>At intet vigtigt mangler</li><li class="inv">Indeksfilen, som Claude læser først (agent, næste slide)</li></ul></div>
       <div class="card frag"><div class="tag">Som standard områdeejeren</div><h3>Dokumentejer</h3><div class="cs">Ansvar for filen</div>
-        <ul class="checks"><li>At indholdet er korrekt</li><li>Gennemgang hvert kvartal</li></ul></div>
+        <ul class="checks"><li>At indholdet er korrekt</li><li class="inv">Gennemgang hver uge (agent, næste slide)</li></ul></div>
       <div class="card frag"><div class="tag">En visning i SharePoint</div><h3>Mine dokumenter</h3><div class="cs">Alt, du ejer, på én liste</div>
         <ul class="checks"><li>Sorteret efter næste gennemgang</li><li>Påmindelse, når en dato er overskredet</li></ul></div>
     </div>
     <div class="chips"><b>Morten er overordnet ansvarlig.</b> Kolonner på hver fil: <span>Ejer</span><span>Senest gennemgået</span><span>Næste gennemgang</span><span>Klassifikation</span></div>
+  </div>
+</section>
+
+<!-- 7b · AGENTEN -->
+<section class="slide s-m" data-title="Agenten tjekker vidensbanken"
+  data-notes="Vi har sat en agent op, der kører af sig selv hver morgen. Den gennemgår alle mapper og undermapper og leder efter fire ting: dokumenter, der ligger dobbelt, oplysninger, der modsiger hinanden, persondata og følsomme oplysninger. Hver dag går den ekstra i dybden med ét område. I dag var det Sales og Q&amp;A. Resultatet lander på en side i Claude, som jeg viser nu. Persondata vises aldrig på siden, kun hvor de ligger, og hvilken slags det er. Fundene står med det alvorligste øverst, så ejerne ved, hvad de skal tage først. Tallene her er fra kørslen 2. november.">
+  <div class="frame"><i></i><i></i><i></i><i></i></div>
+  <div class="content">
+    <div class="kicker">Scheduled agent</div>
+    <h2>Agenten <span class="mark">tjekker</span> vidensbanken.<span class="l2">Hver morgen, af sig selv.</span></h2>
+    <div class="split">
+      <div>
+        <ul class="checks big">
+          <li><b>Dubletter</b>Dokumenter eller oplysninger, der ligger to steder.</li>
+          <li><b>Modstrid</b>Oplysninger, der siger hinanden imod.</li>
+          <li><b>Persondata og følsomhed</b>Viser kun hvor og hvilken slags, aldrig selve oplysningen.</li>
+        </ul>
+        <a class="golink" href="https://claude.ai/artifact/6ZLboks3U1BegKimzUfWdT" target="_blank" rel="noopener">Åbn tjekket i Claude ↗</a>
+      </div>
+      <div class="card kb frag">
+        <div class="ex">Knowledge Base check · 2. november kl. 07.03</div>
+        <div class="kbstats">
+          <div><b class="hi">9</b><span>Nye fund</span></div>
+          <div><b>85</b><span>Åbne fund</span></div>
+          <div><b>6</b><span>Persondata</span></div>
+          <div><b>101</b><span>Filer tjekket</span></div>
+        </div>
+        <div class="kbchips"><span class="on">Alle 91</span><span>Modstrid 68</span><span>Dubletter 10</span><span>Persondata 6</span><span>Følsomhed 7</span></div>
+        <div class="kbnote">Dagens dybdetjek: Sales og Q&amp;A. Højeste alvor øverst.</div>
+      </div>
+    </div>
   </div>
 </section>
 
